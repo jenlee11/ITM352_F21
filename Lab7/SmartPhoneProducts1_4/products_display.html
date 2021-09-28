@@ -24,6 +24,8 @@
                 Hits:<span id="hits_span">0</span>
                 Spins:<span id="spins_span">0</span>
                 Hit/Spin:<span id="hit_spin_span">0</span>
+                You win:<span id="win_span">pending...</span>
+
                 </p>
                 
             <span id='name_span' style ="font-size: 200%;">
@@ -44,7 +46,7 @@
         </aside>
 
         <main>
-            <section class="item" onmouseover="this.className='item rotate'; spins_span.innerHTML = ++spins; hit_spin_span.innerHTML = (hits/spins).toFixed(2); " onclick="this.className='item'; hits_span.innerHTML = ++hits; hit_spin_span.innerHTML = (hits/spins).toFixed(2)">
+            <section class="item" onmouseover="this.className='item rotate'; spins_span.innerHTML = ++spins; hit_spin_span.innerHTML = (hits/spins).toFixed(2); win_span.innerHTML = (spins < 2*hits) " onclick="this.className='item'; hits_span.innerHTML = ++hits; hit_spin_span.innerHTML = (hits/spins).toFixed(2)">
                 <h2>HTC</h2>
                 <p>$40.00</p>
                 <img src="http://dport96.github.io/ITM352/morea/080.flow-control-II/HTC.jpg" alt="HTC Phones">
@@ -78,28 +80,34 @@
         </main>
     </div>
     <footer>
-        <script>
-              var line = 1;
-              var now = new Date();
-              var hours = now.getHours();
-              var minutes = now.getMinutes();
-
-              document.write(`
         <table border="1" style="margin-left: auto; margin-right: auto; text-align: center;">
-            <tbody>
-                <tr><th colspan="2">
-                <h1>Your One Stop For Used Phones - ${first_name[0]}.${last_name[0]}.'s</h1>
-    
+            <tbody><tr><th colspan="2"><h1>
+                Your One Stop For Used Phones - 
+                <script>
+                    document.write(`<b>${first_name[0]}</b>.<i>${last_name[0]}</i>.`);
+                </script>'s
+            </h1>
         </th></tr>
-        <tr><td>${line}</td>
-            <td><br>Copyright @ ${first_name} ${last_name}</td></tr>
-                <tr><td>${line + Number(1)}</td>
-                    <td>${now.getFullYear()}</td></tr>
-                <tr><td>${line + Number(2)}</td>
-                    <td>${(hours + 11)%12 +1}:${minutes} ${(hours < 12)? 'AM' : 'PM'}</td></tr>
-                </tbody>
-            `);                            
-    </script>      
+        <tr><td>1.</td><td><br>Copyright @
+                <script>
+               
+                   document.write(`<b>${first_name}</b> <i>${last_name}</i>`);
+                   var line = 1;
+        var n = d.getHours();
+        var now = newDate();
+                </script>
+                </td></tr>
+                <tr><td>2.</td><td>2021</td></tr>
+                <tr><td>3.</td><td>
+                    <script>
+                    document.write(`${now}`);
+                                            
+                </script>
+                </tr>
+            </tbody>
+        </table>        
+      
+            
     </footer>
 </body>
 
