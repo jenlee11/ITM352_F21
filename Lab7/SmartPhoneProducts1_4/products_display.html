@@ -25,7 +25,6 @@
                 Spins:<span id="spins_span">0</span>
                 Hit/Spin:<span id="hit_spin_span">0</span>
                 You win:<span id="win_span">pending...</span>
-
                 </p>
                 
             <span id='name_span' style ="font-size: 200%;">
@@ -46,31 +45,31 @@
         </aside>
 
         <main>
-            <section class="item" onmouseover="this.className='item rotate'; spins_span.innerHTML = ++spins; hit_spin_span.innerHTML = (hits/spins).toFixed(2); win_span.innerHTML = (spins < 2*hits) " onclick="this.className='item'; hits_span.innerHTML = ++hits; hit_spin_span.innerHTML = (hits/spins).toFixed(2)">
+            <section class="item" onmouseover="this.className='item rotate'; spins_span.innerHTML = ++spins; hit_spin_span.innerHTML = (hits/spins).toFixed(2); over_half = over_half || ((spins < 2*hits) && (hits < spins));win_span.innerHTML = over_half; " onclick="this.className='item'; hits_span.innerHTML = ++hits; over_half = over_half || ((spins < 2*hits) && (hits < spins));hit_spin_span.innerHTML = (hits/spins).toFixed(2);win_span.innerHTML = over_half;">
                 <h2>HTC</h2>
                 <p>$40.00</p>
                 <img src="http://dport96.github.io/ITM352/morea/080.flow-control-II/HTC.jpg" alt="HTC Phones">
             </section>
 
-            <section class="item" onmouseover="this.className='item rotate'; spins_span.innerHTML = ++spins; hit_spin_span.innerHTML = (hits/spins).toFixed(2); " onclick="this.className='item'; hits_span.innerHTML = ++hits; hit_spin_span.innerHTML = (hits/spins).toFixed(2)">
+            <section class="item" onmouseover="this.className='item rotate'; spins_span.innerHTML = ++spins; hit_spin_span.innerHTML = (hits/spins).toFixed(2); over_half = over_half || ((spins < 2*hits) && (hits < spins));win_span.innerHTML = over_half; " onclick="this.className='item'; hits_span.innerHTML = ++hits; over_half = over_half || ((spins < 2*hits) && (hits < spins));hit_spin_span.innerHTML = (hits/spins).toFixed(2);win_span.innerHTML = over_half;">
                 <h2>Apple</h2>
                 <p>$75.00</p>
                 <img src="http://dport96.github.io/ITM352/morea/080.flow-control-II/iphone-3gs.jpg">
             </section>
 
-            <section class="item" onmouseover="this.className='item rotate'; spins_span.innerHTML = ++spins; hit_spin_span.innerHTML = (hits/spins).toFixed(2); " onclick="this.className='item'; hits_span.innerHTML = ++hits; hit_spin_span.innerHTML = (hits/spins).toFixed(2)">
+            <section class="item" onmouseover="this.className='item rotate'; spins_span.innerHTML = ++spins; hit_spin_span.innerHTML = (hits/spins).toFixed(2); over_half = over_half || ((spins < 2*hits) && (hits < spins));win_span.innerHTML = over_half; " onclick="this.className='item'; hits_span.innerHTML = ++hits; over_half = over_half || ((spins < 2*hits) && (hits < spins));hit_spin_span.innerHTML = (hits/spins).toFixed(2);win_span.innerHTML = over_half;">
                 <h2>Nokia</h2>
                 <p>$35.00</p>
                 <img src="http://dport96.github.io/ITM352/morea/080.flow-control-II/Nokia.jpg">
             </section>
 
-            <section class="item" onmouseover="this.className='item rotate'; spins_span.innerHTML = ++spins; hit_spin_span.innerHTML = (hits/spins).toFixed(2); " onclick="this.className='item'; hits_span.innerHTML = ++hits; hit_spin_span.innerHTML = (hits/spins).toFixed(2)">
+            <section class="item" onmouseover="this.className='item rotate'; spins_span.innerHTML = ++spins; hit_spin_span.innerHTML = (hits/spins).toFixed(2); over_half = over_half || ((spins < 2*hits) && (hits < spins));win_span.innerHTML = over_half; " onclick="this.className='item'; hits_span.innerHTML = ++hits; over_half = over_half || ((spins < 2*hits) && (hits < spins));hit_spin_span.innerHTML = (hits/spins).toFixed(2);win_span.innerHTML = over_half;">
                 <h2>Samsung</h2>
                 <p>$45.00</p>
                 <img src="http://dport96.github.io/ITM352/morea/080.flow-control-II/Samsung.jpg">
             </section>
 
-            <section class="item" onmouseover="this.className='item rotate'; spins_span.innerHTML = ++spins; hit_spin_span.innerHTML = (hits/spins).toFixed(2); " onclick="this.className='item'; hits_span.innerHTML = ++hits; hit_spin_span.innerHTML = (hits/spins).toFixed(2)">
+            <section class="item" onmouseover="this.className='item rotate'; spins_span.innerHTML = ++spins; hit_spin_span.innerHTML = (hits/spins).toFixed(2); over_half = over_half || ((spins < 2*hits) && (hits < spins));win_span.innerHTML = over_half; " onclick="this.className='item'; hits_span.innerHTML = ++hits; over_half = over_half || ((spins < 2*hits) && (hits < spins));hit_spin_span.innerHTML = (hits/spins).toFixed(2);win_span.innerHTML = over_half;">
                 <h2>Blackberry</td>
                 </h2>
                 <p>$10.00</p>
