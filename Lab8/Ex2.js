@@ -13,5 +13,3 @@ while(count++ != num_products) {
     console.log(`${count}.${eval('name' + count)}`);    
   
 }
-
-console.log(`That's all we have!`);
