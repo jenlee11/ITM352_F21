@@ -6,26 +6,22 @@
         border:1px solid black;
       }
 </style>
-<table style="border:1px solid black; text-align: center;"
-onclick="
-     new_row = this.appendChild(document.createElement('tr'));
-     for(i=1; i <= this.rows[0].cells.length; i++) {
-     new_cell = new_row.appendChild(document.createElement('td'));
-     new_cell.innerHTML = 'xxx';
-      }
+<table style="border: 1px solid black;text-align: center;" 
+      onclick="
+          new_row = this.appenChild(document.createElement('tr'));
+          for (i=1; i<= this.row[0].cells.length; i++) {}
+          new_cell = new_row.appendChild(document.createElement('td'));
+          new_cell.innerHTML = 'xxx';
 ">
 <tbody id = "prodTableBody">
-  <tr style="border: 1px solid black;">
-    <th style="border: 1px solid black;">Product Name</th><th>Price</th></tr>
-</table>
-<input type="button" value="Delete Last Row"
-conclick = "
-prodTableBody"
+<tr style="border: 1px solid black;"><th style="border: 1px solid black;">Product Name</th><th>Price</th></tr>
+
 <script>
     var product_quantities = [0,2,3,4,5];
 // array of all products
 // corresponds to product_quantities array
 // product_quantities[i] is the quantity for products[i]
+
 products = [
  { 'name': 'small gumball', 'price': 0.02 },
  { 'name': 'medium gumball', 'price': 0.05 },
@@ -33,16 +29,17 @@ products = [
  { 'name': 'small jawbreaker', 'price': 0.06 },
  { 'name': 'large jawbreaker', 'price': 0.10 }
 ];
-
-document.write(`
-<table style="border: 1px solid black;text-align: center;">
-<tbody><tr style="border: 1px solid black;"><th style="border: 1px solid black;">Product Name</th><th>Price</th></tr>
-`);
-for (let prodObj of products) {
+ 
+for (let i in products) {
   document.write(` 
   <tr><td>${products[i].name}</td><td>${products[i]["price"]}</td></tr>
   `);
 }
-document.write(`</tbody></table>`);
+
+
 
 </script>
+</tbody></table>
+<input type="button" value="Delete Last Row"
+onclick = "prodTableBody.deleteRow(prodTableBody.rows.length -1)
+"> 
