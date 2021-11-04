@@ -1,0 +1,9 @@
+<script>
+    let params = (new URL (document.location)).searchParams;
+
+    if(params.has('quantity_textbox1')) {
+    document.write(`Thank for you for ordering ${} things! `);
+    } else {
+        document.write("Hey! You need to purchase some items!");
+    }
+</script>

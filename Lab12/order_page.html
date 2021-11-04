@@ -7,16 +7,23 @@
     <title>Document</title>
 </head>
 <body>
+    <form name="quantity_form" action="display_purchase.html" method ="GET">
     <label>quantity desired:</label>
-    <input id="quantity_textbox" type="text" onkeyup="checkQuantityTextbox(this);"> 
-    <span id='qty_textbox_message'>Enter a quantity</span> 
+    <input name="quantity_textbox1" type="text" onkeyup="checkQuantityTextbox(this, 'qty_textbox_message1');"> 
+    <span id='qty_textbox_message1'>Enter a quantity</span> 
+    <br>
+<input type = "submit" value="Purchase">
+</form>
+
 </body>
+
 </html>
 <script>
-    function checkQuantityTextbox(theTextbox) {
-        // is the textbos value a non-neg int?
+    function checkQuantityTextbox(theTextbox, theMsgSpan) {
+        console.log(theTextbox);
+        // is the textbox value a non-neg int?
         var errors_array = isNonNegInt(theTextbox.value, true);
-        qty_textbox_message.innerHTML = errors_array.join(' ');
+        theMsgSpan.innerHTML = errors_array.join(' ');
     }
 
 
@@ -25,14 +32,24 @@ function isNonNegInt(q, returnErrors = false) {
     //Check if a string is a non-neg integer. If returnErrors is true, the array of errors is returned,
     //others returns true if q is a non-neg int.
     errors = []; //assume no errors at first 
+    if (q =='') q =0;
     if (Number(q) !=q) errors.push('Not a number!'); //check if string is a number value
     else {
             if (q < 0) errors.push('Negative value!'); // Check if it is non-negative
             if (parseInt(q) != q) errors.push('Not an integer!'); // Check that it is an integer
     }
      
-    return returnErrors ? errors : (errors.length == 0)
+    return returnErrors ? errors : (errors.length == 0);
 }
 
-
+function displayPurchase() {
+    var qty = quantity_textbox1.value;
+    var err = isNonNegInt(qty, true);
+    if(err.length ==0) {
+document.getElementsByTagName('body')[0].innerHTML = `Thank for you for ordering ${qty} things!`;
+}
+else {
+    qty_textbox_message1.innerHTML = `<font color="red"> ${err.join('') Enter a valid quantity! </font>`;
+}
+}
 </script>
