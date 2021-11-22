@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<script>
+    let params = (new URL(document.location)).searchParams;
+
+    function isNonNegInt(q, returnErrors = false) {
+        // Check if a string q is a non-neg integer.  If returnRrros is true, the arrayif errors is returned.  
+        // Otrhes returns true if q is a non-neg int.
+        errors = [];
+        if (Number(q) != q) errors.push('Not a number!'); // Check if string is a number value
+        else {
+            if (q < 0) errors.push('Negative value!'); // Check if it is non-negative
+            if (parseInt(q) != q) errors.push('Not an integer!'); // Check that it is an integer
+        };
+        return returnErrors ? errors : (errors.length == 0);
+    }
+</script>
+
+<head>
+    <script src="./product_data.js"></script>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <form name="quantity_form" action="" method="POST">
+        <label>quantity desired:</label>
+        <input name="quantity_textbox" type="text" onkeyup="checkQuantityTextbox(this);">
+        <span id='qty_textbox_message'>Enter a quantity</span>
+        <br>
+        <input name="purchase_submit_button" type="submit" value="Purchase">
+    </form>
+    <script>
+        var q = params.get('quantity');
+    // get quantity from query string if it exists
+
+    let brand = products[0]['brand'];
+    let brand_price = products[0]['price'];
+
+    if(params.has(`error`)){
+            document.write(params.get(`error`));
+        }
+    if (params.has('quantity')) {
+       // no value no response
+
+        if (isNonNegInt(q)) {
+            // products[0].total_sold += Number(q);
+            document.write(`<h2>Thank you for purchasing ${q} ${brand}. Your total is \$${q * brand_price}!</h2> `);
+        } 
+        window.stop();
+    };
+
+    for (i in products) {
+        document.write(`<h4>${products[i]["total_sold"]} ${products[i]["brand"]} have been sold!</h4>`);
+    };
+        document.write(`<h3>${products[0]["brand"]} at \$${products[0]["price"]}</h3>`);
+    </script>
+
+</body>
+
+</html>
+<script>
+    if (params.has('quantity_textbox')) {
+        quantity_form["quantity_textbox"].value = params.get('quantity_textbox'); //this code made a sticky (means if I entered negative # or somthing, that # is still there on the textbox.) 
+        checkQuantityTextbox(quantity_form["quantity_textbox"]);
+    }
+
+</script>
+
+<script>
+    function checkQuantityTextbox(theTextBox) {
+        // is the textbox value a non-neg Int
+        var errors_array = isNonNegInt(theTextBox.value, true);
+        qty_textbox_message.innerHTML = errors_array.join(' ');
+    }
+
+
+    function displayPurchase() {
+        var qty = quantity_textbox.value;
+        var arr = isNonNegInt(qty, true);
+        if (err.length == 0) {
+            document.getElementsByTagName('body')[0].innerHTML = `Thank for you for ordering ${qty} things!`;
+        }
+        else {
+            qty_textbox_message.innerHTML = `<font color = "red">${err.join('')}'Enter a valid quantity!'</font>`;
+        };
+    }
+</script>
+
+<script>
+    if (params.has('quantity_textbox')) {
+        quantity_form["quantity_textbox"].value = params.get('quantity_textbox');
+        checkQuantityTextbox(quantity_form["quantity_textbox"]);
+        if (params.get('quantity_textbox') > 0) {
+            //document.body.innerHTML = `Thank you for ordering ${params.get('quantity_textbox')}things!`;
+            window.location.href = "display_purchase.html" + document.location.search;
+        }
+    };
+</script>
