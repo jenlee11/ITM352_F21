@@ -3,26 +3,24 @@ var express = require('express');
 var app = express();
 
 
-var filename = './registration_data.json';
+var filename = './user_data.json';
 
 if (fstat.existsSync(filename)) {
     var stats = fs.statSync(filename);
     console.log(filename + 'has' + stats["size"] + 'characters');
     // have reg data file, so read data and parse into user_registration_info object
-    let data_str = fs.readFileSync(filename, 'utf-8');
+    
     var user_registration_info = JSON.parse(data_str);
+    console.log(user_registration_info);
 }
 else {
     console.log(filename + 'does not exist!');
 }
-app.get("/", function(request, response){
-    response.send('nothing here');
-});
 
 app.use(myParser.urlencoded({ extended: true }));
 
 app.get("/login", function (request, response) {
-    // Give a simple login form
+    // Give a simple login form will be useful for the assignment 2
     str = `
 <body>
 <form action="" method="POST">
@@ -41,10 +39,17 @@ let login_username = request.body['username'];
 let login_password = request.body["password"];
     
 //check if username exists
-if (typeof user_registration_info[login_username] !='undefined') {
-    
+if (typeof user_registration_info [login_username] != 'undefined') {
+    if (user_registration_info[login_username]["password"] == login_password) {
+        response.send(`${login_username} is loged in`);
+    } else {
+        response.redirect(`./login?err=incorrect password for ${login_username}`);
+    }
+} else {
+    response.send(`${login_username} does not exist`);
 }
-response.send('processing login' + JSON.stringify(request.body));
+
+response.send('processing login' + JSON.stringify(request.body))
 });
 
 app.listen(8080, () => console.log(`listening on port 8080`));

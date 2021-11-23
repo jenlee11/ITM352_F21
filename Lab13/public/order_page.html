@@ -26,7 +26,7 @@
 
 <body>
 
-    <form name="quantity_form" action="" method="POST">
+    <form name="quantity_form" action="./process_form" method="POST">
         <label>quantity desired:</label>
         <input name="quantity_textbox" type="text" onkeyup="checkQuantityTextbox(this);">
         <span id='qty_textbox_message'>Enter a quantity</span>
@@ -43,9 +43,9 @@
     if(params.has(`error`)){
             document.write(params.get(`error`));
         }
-    if (params.has('quantity')) {
+    
+        if (params.has('quantity')) {
        // no value no response
-
         if (isNonNegInt(q)) {
             // products[0].total_sold += Number(q);
             document.write(`<h2>Thank you for purchasing ${q} ${brand}. Your total is \$${q * brand_price}!</h2> `);

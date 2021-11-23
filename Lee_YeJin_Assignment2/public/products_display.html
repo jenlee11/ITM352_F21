@@ -1,0 +1,202 @@
+<script src ="products.js" type="text/javascript"></script>
+<!--copy of example Assignment1_2 file from design example -->
+
+<script>
+    function isNonNegInt(q, return_errors = false) {
+        errors = []; // assume no errors at first
+        if(q == '') q =0; // handle blank inputs as if they are 0
+        if (Number(q) != q) errors.push('<font color="red">Not a number!</font>'); // Check if string is a number value
+        else if (q < 0) errors.push('<font color="red">Negative value!</font>'); // Check if it is non-negative
+        else if (parseInt(q) != q) errors.push('<font color="red">Not an integer!</font>'); // Check that it is an integer
+        return return_errors ? errors : (errors.length == 0);
+    }
+
+    function checkQuantityTextbox(theTextbox) {
+        errs = isNonNegInt(theTextbox.value, true);
+        if (errs.length == 0) errs = ['Quantity desired:'];
+        if (theTextbox.value.trim() == '') errs = ['Quantity'];
+        document.getElementById(theTextbox.name + '_label').innerHTML = errs.join(", ");
+    }
+
+    window.onload = function () {
+        let params = (new URL(document.location)).searchParams; // get the query string which has the form data
+        // if there is an error msg in the q-string, display it in an alert
+        if(params.has('err_msg')) {
+            alert(params.get('err_msg'));
+        }
+        // If there is quantity data in the q-string, put the values into the quantity textboxes and check if valid
+        
+            for (i = 0; i < products.length; i++) {
+                if (params.has(`quantity${i}`)) {
+                    a_qty = params.get(`quantity${i}`);
+                    // make textboxes sticky in case of invalid data
+                    product_selection_form[`quantity${i}`].value = a_qty;
+                    checkQuantityTextbox(product_selection_form[`quantity${i}`]); // show where the error is
+                    
+                }
+            }
+            
+        }
+
+                
+    </script>
+
+<!DOCTYPE html>
+
+<html lang="en">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+
+<!--Copied Template from Pizza from w3schools link-->
+<head>
+  <link href="./products-style.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Antique+Soft&display=swap">
+
+</head>
+
+<body>
+   
+    <!-- Navbar (sit on top) -->
+    <div class="w3-top w3-hide-small">
+        <div class="w3-bar w3-xlarge w3-black w3-opacity w3-hover-opacity-off" id="myNavbar">
+            <a href="#" class="w3-bar-item w3-button">HOME</a>
+            <a href="#products" class="w3-bar-item w3-button">PRODUCTS</a>
+            <a href="#about" class="w3-bar-item w3-button">ABOUT</a>
+            <a href="#contact" class="w3-bar-item w3-button">CONTACT</a>
+        </div>
+    </div>
+
+    <!-- Header with image -->
+   
+    <header class="bgimg w3-display-container w3-grayscale-min" id="home">
+        <div class="w3-display-bottomleft w3-padding">
+            <span class="w3-tag w3-xlarge">* Our physical store is currently closed!</span>
+          </div>
+          <div class="w3-display-middle w3-center">
+            <span class="w3-text-white w3-hide-small" style="font-size:100px">Jen's<br>Life's Good</span>
+            <span class="w3-text-white w3-hide-large w3-hide-medium" style="font-size:60px"><b>Jen's<br>The Best LGs</b></span>
+            <p><a href="#products" class="w3-button w3-xxlarge w3-white">Bring me closer to your products</a></p>
+        </div>
+    </header>
+
+    <!-- products Container -->
+
+    <body>
+        <h1 id="products">
+
+            <br>
+            <h1 class="w3-center w3-jumbo" style="margin-bottom:64px">LG Appliances</h1>
+            <form action="./purchase" method="POST" name="product_selection_form">
+                
+                <!-- the server is going to post the form to process_form -->
+                <div>
+                    <main>
+                        <script>
+                            //make a loop 
+                            
+                            for (i = 0; i < products.length; i++) {
+                                document.write(`
+                <section class="item">
+                    <h2><span class="w3-center w3-tag w3-dark-grey w3-round"><b>${products[i].model}</b></h2>
+                
+                    <p><span class="w3-left w3-tag w3-dark-grey w3-round">$${products[i].price}</span></p>
+                    <label id="quantity${i}_label"}">Quantity</label>
+                    <input type="text" value=0 name="quantity${i}" onkeyup="checkQuantityTextbox(this)">
+                    <span>${products[i].quantity_available} available</span>
+                     
+                    <div class="img_wrap">
+                    <img src="./images/${products[i].image}"></div>
+                </section>
+                    `);
+                            }
+                        </script>
+                    </main>
+                </div>
+
+                <!-- purchase button -->
+                <input type="submit" value="PURCHASE">
+
+            </form>
+
+            <!-- keep up with inventory copied and modified from Lab 13 order_page.html-->
+            <script>
+                var q = params.get('quantity');
+            // get quantity from query string if it exists
+        
+            let model = products[0]['model'];
+            let model_price = products[0]['price'];
+        
+            if(params.has(`error`)){
+                    document.write(params.get(`error`));
+                }
+            if (params.has('quantity')) {
+               // no value no response
+        
+                if (isNonNegInt(q)) {
+                    //products[0].total_sold -= Number(q);
+                    document.write(`<h2>Thank you for purchasing ${q} ${model}. Your total is \$${q * model_price}!</h2> `);
+                } 
+                window.stop();
+            };
+        
+            for (i in products) {
+                document.write(`<h4>${products[i]["total_sold"]} ${products[i]["model"]} have been sold!</h4>`);
+            };
+                document.write(`<h3>${products[0]["model"]} at \$${products[0]["price"]}</h3>`);
+            </script>
+        
+
+            <!-- About Container -->
+            <div class="w3-container w3-padding-64 w3-red w3-grayscale w3-xlarge" id="about">
+                <div class="w3-content">
+                    <h1 class="w3-center w3-jumbo" >About</h1>
+                    <p>Every LG piece is a powerhouse of cutting-edge technology, crafted to be functional yet
+                        elegant. It was founded on three pillars: craftsmanship, innovation, and authenticity. These
+                        support the Art of Essence, the harmony of art and technology.</p>
+
+                    <!-- Contact -->
+                    <div class="w3-container w3-padding-64 w3-blue-grey w3-grayscale-min w3-xlarge" id="contact">
+                        <div class="w3-content">
+                            <h1 class="w3-center w3-jumbo" style="margin-bottom:64px">Contact</h1>
+                            <p>You can contact us through email yejinj@hawaii.edu </p>
+                            <p><span class="w3-tag">FYI!</span>Due to COVID-19 currently we are only offering the
+                                service online.
+                            </p>
+                            <form action="/action_page.php" target="_blank">
+                                <p><input class="w3-input w3-padding-16 w3-border" type="text" placeholder="model"
+                                        required model="model"></p>
+                                <p><input class="w3-input w3-padding-16 w3-border" for="email"
+                                        placeholder="john@example.com" required model="email"></p>
+                                <p><input class="w3-input w3-padding-16 w3-border" type="text"
+                                        placeholder="Message \ Special requirements" required model="Message"></p>
+                                <p><button class="w3-button w3-light-grey w3-block" type="submit">SEND US
+                                        MESSAGE</button></p>
+                            </form>
+                        </div>
+                    </div>
+
+
+                    <script>
+                        // Tabbed products
+                        function openProducts(evt, productsModel) {
+                            var i, x, tablinks;
+                            x = document.getElementsByClassName("products");
+                            for (i = 0; i < x.length; i++) {
+                                x[i].style.display = "none";
+                            }
+                            tablinks = document.getElementsByClassName("tablink");
+                            for (i = 0; i < x.length; i++) {
+                                tablinks[i].className = tablinks[i].className.replace(" w3-red", "");
+                            }
+                            document.getElementById(productsName).style.display = "block";
+                            evt.currentTarget.firstElementChild.className += " w3-red";
+                        }
+                        // document.getElementById("myLink").click();
+                    </script>
+
+    </body>
+        
+</html>
