@@ -1,7 +1,7 @@
 var express = require('express');
 var app = express();
-var products = require('./products.json');
-
+var data = require('./public/products.js');
+var products = data.prods;
 
 // decode form data in POST requests
 app.use(express.urlencoded({ "extended": true }));
@@ -22,12 +22,11 @@ app.post("/purchase", function (request, response) {
    for (i in products) {
       let q = request.body[`quantity${i}`];
       // Check is quantity is non-neg integer
-      console.log(q, q > 0);
       if (isNonNegInt(q) == false ) {
          errors['not_quantity' + i] = `${q} is not a valid quantity for  ${products[i].model}.`;
       }
       
-      // check if customer wants to order more than inventory that we have
+      // check if q is more than products[i]['quantity_available']
       if (q > products[i].quantity_available) {
          errors['not_available' + i] = `We don't have enough ${products[i].model}. Please select less than ${ products[i].quantity_available }`;
       }
@@ -44,7 +43,7 @@ app.post("/purchase", function (request, response) {
 
    
    //response JavaScript
-   app.get("/products.js", function (request, response, next) {
+   app.get("/products", function (request, response, next) {
        response.type('.js');
        var products_str = `var products = ${JSON.stringify(products)};`;
        response.send(products_str);

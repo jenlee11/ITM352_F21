@@ -1,0 +1,154 @@
+<script src="products.js" type="text/javascript"></script>
+<script>
+  //based on the example invoice 4 WOD
+  function generate_item_rows(product_quantities_array) {
+    // This function take an array of quantities in the order of the products array and writes out table rows
+    for (i in products) {
+      if (product_quantities_array[i] == 0) continue; // if no quantities, don't write out anything
+
+      // calculate the subtotals and total_weight and write extended_price and extended_weight
+
+      extended_price = products[i].price * product_quantities_array[i];
+      subtotal += extended_price;
+      extended_weight = products[i].weight * product_quantities_array[i];
+      total_weight += extended_weight;
+
+      //wirtes out a table row assuming we're inside the table element.(*only creates table rows)
+      document.write(`
+<tr>
+<td width="43%">${products[i].model}</td>
+<td align="center" width="10%">${product_quantities_array[i]}</td>
+<td width="13%">${products[i].weight}</td>
+<td width="13%">${extended_weight}</td>
+<td width="13%">\$${products[i].price}</td>
+<td width="13%">\$${extended_price}</td>
+
+
+</tr>
+`);
+    }
+  }
+
+  let params = (new URL(document.location)).searchParams;
+  var quantities = [];
+  // product quanitities are in the querystring. Get them and put into quantities array
+  for (i = 0; i < products.length; i++) {
+    if (params.has(`quantity${i}`)) {
+      quantities[i] = params.get(`quantity${i}`);
+    }
+  }
+
+  console.log(quantities);
+</script>
+<!-- copy of invoice 4-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <link href="./invoice-style.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Invoice</title>
+</head>
+
+<body>
+  <header>
+    <h1>Invoice</h1>
+
+  </header>
+  <article>
+  <table border="2" table class="inventory">
+    <thead>
+      <tr>
+      <th><span contenteditable>Model</span></th>
+      <th><span contenteditable>Quantity</span></th>
+      <th><span contenteditable>Weight (lb)</span></th>
+      <th><span contenteditable>Extended weight</span></th>
+      <th><span contenteditable>Price</span></th>
+      <th><span contenteditable>Extended price</span></th>
+
+    </tr>
+  </thead>
+    <tbody>
+      
+
+      <script>
+        // Need to define subtotal and total_weight because will be adding to them inside generate_item_rows
+        subtotal = 0;
+        total_weight = 0;
+        generate_item_rows(quantities);
+
+        // Compute tax
+        var tax_rate = 0.0471;
+        var tax = subtotal * tax_rate;
+
+        // Compute shipping // change it to suitable for appliances *weight ..
+
+        if (total_weight <= 10) {
+          shipping = 50;
+        }
+        else if (total_weight <= 500) {
+          shipping = 200;
+        }
+        else if (total_weight > 500) {
+          shipping = 300;
+        }
+
+        // Compute grand total
+        var grand_total = subtotal + tax + shipping;
+
+
+
+
+      </script>
+      <table class="balance">
+        
+        <tr>
+          <td><span contenteditable>Sub-total</span></td>
+          <td><span contenteditable>$
+            <script>document.write(subtotal.toFixed(2));</script></span>
+          </td>
+        </tr>
+        <tr>
+          <td><span contenteditable>Tax @ 4.71%</span>
+          </td>
+          <td><span contenteditable>$
+            <script>document.write(tax.toFixed(2));</script></span>
+          </td>
+        </tr>
+        <tr>
+          <td>Total weight</td>
+          <td><span contenteditable>
+            <script>document.write(total_weight);</script> lb</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td><span contenteditable>Shipping</span></td>
+          <td><span contenteditable>$
+            <script>document.write(shipping.toFixed(2));</script></span>
+          </td>
+        </tr>
+        <tr>
+          <td><span contenteditable><strong>Total</strong></span></td>
+          <td><span contenteditable><strong>$
+              <script>document.write(grand_total.toFixed(2));</script></span>
+            </strong></td>
+        </tr>
+    </tbody>
+  </table>
+</article>
+  <aside>
+    <div>
+      <br><br><br>
+        <h1><b>OUR SHIPPING POLICY IS:</b></h1>
+       Weight under 10 lb will be $50 shipping<br>
+       Weight 11 ~ 500 lb will be $200 shipping<br>
+      Weight over 500 lb will be $300 shipping<br>
+      </p>
+    </div>
+  </aside>
+</body>
+
+</html>
