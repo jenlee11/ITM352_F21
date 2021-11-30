@@ -1,5 +1,9 @@
-<script src="products.js" type="text/javascript"></script>
+<script src="./products.js" type="text/javascript"></script>
+<script src="./user_data.js" type="json"></script>
+
 <script>
+
+  
   //based on the example invoice 4 WOD
   function generate_item_rows(product_quantities_array) {
     // This function take an array of quantities in the order of the products array and writes out table rows
@@ -61,12 +65,12 @@
   <table border="2" table class="inventory">
     <thead>
       <tr>
-      <th><span contenteditable>Model</span></th>
-      <th><span contenteditable>Quantity</span></th>
-      <th><span contenteditable>Weight (lb)</span></th>
-      <th><span contenteditable>Extended weight</span></th>
-      <th><span contenteditable>Price</span></th>
-      <th><span contenteditable>Extended price</span></th>
+      <th><span>Model</span></th>
+      <th><span>Quantity</span></th>
+      <th><span>Weight (lb)</span></th>
+      <th><span>Extended weight</span></th>
+      <th><span>Price</span></th>
+      <th><span>Extended price</span></th>
 
     </tr>
   </thead>
@@ -105,34 +109,34 @@
       <table class="balance">
         
         <tr>
-          <td><span contenteditable>Sub-total</span></td>
-          <td><span contenteditable>$
+          <td><span>Sub-total</span></td>
+          <td><span>$
             <script>document.write(subtotal.toFixed(2));</script></span>
           </td>
         </tr>
         <tr>
-          <td><span contenteditable>Tax @ 4.71%</span>
+          <td><span>Tax @ 4.71%</span>
           </td>
-          <td><span contenteditable>$
+          <td><span>$
             <script>document.write(tax.toFixed(2));</script></span>
           </td>
         </tr>
         <tr>
           <td>Total weight</td>
-          <td><span contenteditable>
+          <td><span>
             <script>document.write(total_weight);</script> lb</span>
           </td>
         </tr>
 
         <tr>
-          <td><span contenteditable>Shipping</span></td>
-          <td><span contenteditable>$
+          <td><span>Shipping</span></td>
+          <td><span>$
             <script>document.write(shipping.toFixed(2));</script></span>
           </td>
         </tr>
         <tr>
-          <td><span contenteditable><strong>Total</strong></span></td>
-          <td><span contenteditable><strong>$
+          <td><span><strong>Total</strong></span></td>
+          <td><span><strong>$
               <script>document.write(grand_total.toFixed(2));</script></span>
             </strong></td>
         </tr>

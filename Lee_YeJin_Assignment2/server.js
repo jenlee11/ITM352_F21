@@ -1,10 +1,30 @@
+/*
+Ye Jin Lee
+Run this server to check.
+it checks quantities available, send to invoice.
+most of my codes are borrowed from other labs, WODs, and website (css).
+*/
+
 var express = require('express');
 var app = express();
 var products = require('./products.json');
+var fs = require('fs');
+//get login data from user_data.json
+var filename = './user_data.json';
 
 
-// decode form data in POST requests
-app.use(express.urlencoded({ "extended": true }));
+//Lab14 Ex4
+if (fs.existsSync(filename)) {
+   // have reg data file, so read data and parse into user_data_obj
+   var file_stats = fs.statSync(filename); //return information about the given file path
+   var data = fs.readFileSync(filename, 'utf-8'); // read the file and return its content.
+   var user_data = JSON.parse(data);
+   console.log(`${filename} has ${file_stats.size} characters`);
+} else {
+   console.log(filename + ' does not exist!');
+}
+
+// It goes down through the order of the following. If matched, it excutes the function.
 
 // monitor all requests
 app.all('*', function (request, response, next) {
@@ -12,8 +32,91 @@ app.all('*', function (request, response, next) {
    next();
 });
 
+// decode form data in POST requests
+app.use(express.urlencoded({ "extended": true }));
+
+// Registration
+
+app.post("/register.html", function (request, response) {
+   // validate registration data
+   var errors = {}; // assume no errors
+   username = request.body.username.toLowerCase();
+
+   // check is username is taken
+   if(typeof user_data[username] != 'undefined') {
+      errors['username_taken'] = `Sorry, ${username} is taken. Please select another.`;
+   }
+
+   // check if username has x character only letters and numeber 
+
+
+
+
+
+
+
+
+
+
+
+   let params = new URLSearchParams(request.query);
+ 
+   // write registation data if no errors 
+   if (Object.keys(errors).length == 0) {
+      user_data[username] = {};
+      user_data[username].password = request.body.password;
+      user_data[username].email = request.body.email;
+
+      fs.writeFileSync('./user_data.json', JSON.stringify(user_reg_data));
+
+      params.append('username', username);
+      response.redirect('./invoice.html?' + params.toString());
+   } else {
+      // put reg data in params
+      params.append('reg_data', JSON.stringify(request.body));
+      // put errors in params
+      params.append('errors', JSON.stringify(errors));
+      response.redirect('./register.html?' + params.toString());
+   }
+});
+
+// Login
+
+app.post("/login.html", function (request, response) {
+   let params = new URLSearchParams(request.query);
+ 
+   // Process login form POST and redirect to logged in page if ok, back to login page if not 
+   let login_username = request.body['username'].toLowerCase();
+   let login_password = request.body['password'];
+   // check if username exeist, then check password entered match password stored
+   if (typeof user_data[login_username] != 'undefined') {
+      // take "password" and check if the password in the textbox is right
+      if (user_data[login_username]["password"] == login_password) {
+         // if username and pw matches then redirect to invoice.html
+         params.append('username', login_username);
+         response.redirect(`./invoice.html?` + params.toString());
+         return;
+      } else {
+         // if the password doesn't match,   
+         params.append(`error`, 'password not correct');
+         response.redirect(`./login.html?` + params.toString());
+      }
+   } //if username is not found, send em back to login.html
+   else {
+      params.append(`error`, 'username not found');
+      response.redirect(`./login.html?`+ params.toString());
+   }
+});
+
+// if client askes to load products.js, respond with JavaScript of the products array. This 
+// enables dynamic sharing of product data including inventory amounts
+app.get("/products.js", function (request, response, next) {
+   response.type('.js');
+   var products_str = `var products = ${JSON.stringify(products)};`;
+   response.send(products_str);
+});
+
 // process purchase request (validate quantities, check quantity available)
-/* your code here */
 
 app.post("/purchase", function (request, response) {
    // validate the quantities wanted
@@ -23,13 +126,13 @@ app.post("/purchase", function (request, response) {
       let q = request.body[`quantity${i}`];
       // Check is quantity is non-neg integer
       console.log(q, q > 0);
-      if (isNonNegInt(q) == false ) {
+      if (isNonNegInt(q) == false) {
          errors['not_quantity' + i] = `${q} is not a valid quantity for  ${products[i].model}.`;
       }
-      
+
       // check if customer wants to order more than inventory that we have
       if (q > products[i].quantity_available) {
-         errors['not_available' + i] = `We don't have enough ${products[i].model}. Please select less than ${ products[i].quantity_available }`;
+         errors['not_available' + i] = `We don't have enough ${products[i].model}. Please select less than ${products[i].quantity_available}`;
       }
       // check if q > 0, if so, note that user selected some quantities
       if (q > 0) {
@@ -41,43 +144,9 @@ app.post("/purchase", function (request, response) {
       errors['no_quantities'] = "You need to select some items";
    }
 
+   // create querystring from request.body (which has the quantity data)
+   let params = new URLSearchParams(request.body);
 
-   
-   //response JavaScript
-   app.get("/products.js", function (request, response, next) {
-       response.type('.js');
-       var products_str = `var products = ${JSON.stringify(products)};`;
-       response.send(products_str);
-   });
-   
-   // It goes down through the order of the following. If matched, it excutes the function.
-   
-   app.post('/purchase', function (request, response, next) {
-       let model = products[0]['model'];
-       let model_price = products[0]['price'];
-   
-       console.log(request.body);
-       var q = request.body['quantity_textbox'];//get the  value
-       if (typeof q != 'undefined') {
-           // no value no response 
-           if (isNonNegInt(q)) {
-               products[0].total_sold -= Number(q);
-               response.redirect('./products_display.html?quantity=' -q);
-           } else {
-               response.redirect('./products_display.html?error=Invalid%20Quantity&quantity_textbox=' - q);
-           }
-       } else {
-           response.send(`Hey! You need to pick some stuff!`)
-       }
-       next();
-   });
-   
-
-   // create querystring from request.body
-   var q_str = '';
-   for (prop in request.body) {
-      q_str += `${prop}=${request.body[prop]}&`;
-   }
    // send user back to products_display.html with error messages if error
    if (Object.keys(errors).length == 0) {
       // keep track of inventory. subtract purchased qtt from availability
@@ -85,16 +154,16 @@ app.post("/purchase", function (request, response) {
          products[i].quantity_available -= Number(request.body[`quantity${i}`]);
       }
       console.log(products);
-      response.redirect('./invoice.html?' + q_str);
+      response.redirect('./login.html?' + params.toString());
    }
-   else {
-      // generate an alert with error messages
+   else { // oops, had errors, so redirect back to productss_display.html wioth the errors
+      // generate a string of all error messages
       let err_str = '';
-      // Put all error messages into a string
       for (err in errors) {
          err_str += errors[err] + '\n';
       }
-      response.redirect('./products_display.html?' + q_str + `err_msg=${err_str}`);
+      params.append('err_msg', err_str);
+      response.redirect('./products_display.html?' + params.toString());
    }
 });
 
@@ -104,16 +173,16 @@ app.use(express.static('./public'));
 // start server
 app.listen(8080, () => console.log(`listening on port 8080`));
 
-function isNonNegInt(q, returnErrors=false) {
+function isNonNegInt(q, returnErrors = false) {
    var errors = [];
    //check if string is a number value
- if (Number(q) !=q) errors.push('Not a number!'); 
+   if (Number(q) != q) errors.push('Not a number!');
 
-// Check if it is non-negative
- if (q < 0) errors.push('Negative value!'); 
+   // Check if it is non-negative
+   if (q < 0) errors.push('Negative value!');
 
- // Check that it is an integer
-if (parseInt(q) != q) errors.push('Not an integer!'); 
-  
-return returnErrors ? errors : ((errors.length > 0) ? false:true);
+   // Check that it is an integer
+   if (parseInt(q) != q) errors.push('Not an integer!');
+
+   return returnErrors ? errors : ((errors.length > 0) ? false : true);
 }

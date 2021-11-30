@@ -3,7 +3,7 @@ var express = require('express');
 var app = express();
 var myParser = require("body-parser");
 //user info that stores in JSON file
-var filename = './user_data.json';
+var filename = './registration_data.json';
 
 if (fs.existsSync(filename)) {
     // have reg data file, so read data and parse into user_data_obj

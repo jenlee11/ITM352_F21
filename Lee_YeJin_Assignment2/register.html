@@ -1,0 +1,31 @@
+
+<script>
+ //get querystrings from form
+ let params = (new URL(document.location)).searchParams;
+// get errors if there were any
+if(params.has('errors')) {
+    var errors = JSON.parse(params.has('errors'));
+}
+// if have reg data, get it and put it back into form 
+if(params.has('reg_data')) {
+    var reg_data = JSON.parse(params.has('reg_data'));
+    // put reg data into form elements (make a loop)
+    
+}
+
+</script>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign up</title>
+</head>
+<body>
+    <form>
+        
+    </form>
+</body>
+</html>

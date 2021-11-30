@@ -3,21 +3,21 @@ var express = require('express');
 var app = express();
 
 
-var filename = './user_data.json';
+var filename = './registration_data.json';
 
-if (fstat.existsSync(filename)) {
+if (fs.existsSync(filename)) {
     var stats = fs.statSync(filename);
     console.log(filename + 'has' + stats["size"] + 'characters');
     // have reg data file, so read data and parse into user_registration_info object
     
-    var user_registration_info = JSON.parse(data_str);
+    var user_registration_info = require(filename);
     console.log(user_registration_info);
 }
 else {
     console.log(filename + 'does not exist!');
 }
 
-app.use(myParser.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true }));
 
 app.get("/login", function (request, response) {
     // Give a simple login form will be useful for the assignment 2
@@ -35,10 +35,14 @@ app.get("/login", function (request, response) {
 
 app.post("/login", function (request, response) {
     // Process login form POST and redirect to logged in page if ok, back to login page if not
+    let data_str = fs.readFileSync(filename, 'utf-8');
+    var user_registration_info = JSON.parse(data_str);
+    
+//check if username exists
 let login_username = request.body['username'];
 let login_password = request.body["password"];
     
-//check if username exists
+
 if (typeof user_registration_info [login_username] != 'undefined') {
     if (user_registration_info[login_username]["password"] == login_password) {
         response.send(`${login_username} is loged in`);
