@@ -37,20 +37,46 @@ app.use(express.urlencoded({ "extended": true }));
 
 // Registration
 
-app.post("/register.html", function (request, response) {
+app.post("/register", function (request, response) {
    // validate registration data
    var errors = {}; // assume no errors
    username = request.body.username.toLowerCase();
+   fullname = request.body.name;
 
    // check is username is taken
-   if(typeof user_data[username] != 'undefined') {
+   if (typeof user_data[username] != 'undefined') {
       errors['username_taken'] = `Sorry, ${username} is taken. Please select another.`;
    }
+   
+   // check if username has 4-10 characters. only letters and numebers.
+   if (typeof user_data[username.length] < 10 || typeof user_data[username.length] > 4) {
+      errors['username'] = 'Your username has to be 4 - 10 characters';// if enter invalid length, put wrong
+   }
 
-   // check if username has x character only letters and numeber 
+   //username contains only letters and numbers. show error message if entered other than numbers and letters
+   if (/^[0-9a-zA-Z]+$/.test(typeof user_data[username])) {
+   }
+   else {
+      errors['username'] = 'Username allowed only Letters and Numbers (Ex. jenjen1)';
+   }
+   // check fullname
+   if (/^[A-Za-z, ]+$/.test(typeof user_data[fullname]) == false) {
+      errors['name'] = 'Please enter YOUR FULL NAME here';
+   }
+   // check email
+   if (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(request.body.email) == false) {
+      errors['email'] = 'Please use a valid email (Ex: name@email.com)';
+   }
 
+   // check password
+   if (request.body.password.length < 6) {
+      errors['password'] = 'You need to have a minimum of 6 characters'
+   }
 
-
+   // check pw-repeat
+   if (request.body.password != request.body.repeat_password) {
+      errors['pw_repeat'] = `Repeat password is not the same as password you typed above`;
+   }
 
 
 
@@ -60,7 +86,7 @@ app.post("/register.html", function (request, response) {
 
 
    let params = new URLSearchParams(request.query);
- 
+
    // write registation data if no errors 
    if (Object.keys(errors).length == 0) {
       user_data[username] = {};
@@ -84,7 +110,7 @@ app.post("/register.html", function (request, response) {
 
 app.post("/login.html", function (request, response) {
    let params = new URLSearchParams(request.query);
- 
+
    // Process login form POST and redirect to logged in page if ok, back to login page if not 
    let login_username = request.body['username'].toLowerCase();
    let login_password = request.body['password'];
@@ -104,7 +130,7 @@ app.post("/login.html", function (request, response) {
    } //if username is not found, send em back to login.html
    else {
       params.append(`error`, 'username not found');
-      response.redirect(`./login.html?`+ params.toString());
+      response.redirect(`./login.html?` + params.toString());
    }
 });
 
