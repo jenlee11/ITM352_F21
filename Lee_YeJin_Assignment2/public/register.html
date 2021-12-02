@@ -8,16 +8,16 @@
   window.onload = function () {
   // get errors if there were any
   if (params.has('errors')) {
-    var errors = JSON.parse(params.has('errors'));
+    var errors = JSON.parse(params.get('errors'));
    
     // if have reg data, get it and put it back into form 
     if (params.has('reg_data')) {
-      var reg_data = JSON.parse(params.has('reg_data'));
+      var reg_data = JSON.parse(params.get('reg_data'));
   
       // put reg data into form elements (make a loop)
             // make register form sticky
             for (i = 0; i < register.elements.length; i++) {
-          register[i].value = params.get(register[i].name);
+          register[i].value = reg_data(register[i].name);
           if (typeof errors[register[i].name] != 'undefined') {
             document.getElementById(register[i].name + '_error').innerHTML = errors[register[i].name];
           }

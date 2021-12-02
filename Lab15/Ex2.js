@@ -2,12 +2,15 @@ var fs = require('fs');
 var express = require('express');
 var app = express();
 
-var cookieParser = require('cookie-parser');
-app.use(cookieParser());
+//var cookieParser = require('cookie-parser');
+//app.use(cookieParser());
+
+var session = require('express-session');
+app.use(session({secret: "MySecretKey", resave: true, saveUninitialized: true}));
 
 app.get('/set_cookie', function (request, response){
 // this will send a cookie to the requester (browser). get request and respond with cookie.
-response.cookie('name', 'Jen', {maxAge: 5*1000});
+response.cookie('name', 'Dan', {maxAge: 5*1000});
 response.send('The name cookie has been sent!');
 });
 
@@ -17,7 +20,13 @@ app.get('/use_cookie', function (request, response){
     response.send(` Welcome to the Use Cookie page ${request.cookies.name}`);
     });
 
-
+       
+app.get('/use_session', function (request, response){
+            // this will get the name cookie from the requester and respond/display a message.
+           // console.log(    request.cookies  );
+            response.send(` Welcome, your session id is ${request.session.id}`);
+            });
+                
 // recognize the incoming Request Object as strings or arrays
 app.use(express.urlencoded({ extended: true }));
 
@@ -34,7 +43,7 @@ if (fs.existsSync(filename)) {
     // have reg data file, so read data and parse into user_data_obj
         var stats = fs.statSync(filename); //return information about the given file path
         var data = fs.readFileSync(filename, 'utf-8'); // read the file and return its content.
-        var user_reg_data = JSON.parse(data);
+        var users_reg_data = JSON.parse(data);
         console.log(filename + 'has'+ stats["size"] + 'characters');
     } else {
         console.log(filename + ' does not exist!');
@@ -106,6 +115,15 @@ app.post("/login", function (request, response) {
     if (typeof users_reg_data[login_username] != 'undefined') {
         // take "password" and check if the password in the textbox is right
         if (users_reg_data[login_username]["password"] == login_password) {
+            if(typeof request.session['last login'] != 'undefined') {
+            var last_login = request.session['last login'];
+        } else {
+          
+            var last_login = 'First login!';
+        }
+        //put login date and time into session
+            request.session['last login'] = new Date().toISOString();
+            response.send(`You last loggin in on ${last_login}`);
             // if matches, 
             response.send(`${login_username} is loged in`);
         } else {
