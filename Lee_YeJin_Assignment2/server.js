@@ -45,22 +45,15 @@ app.post("/register", function (request, response) {
 
    // check is username is taken
    if (typeof user_data[username] != 'undefined') {
-      errors['username_taken'] = `Sorry, ${username} is taken. Please select another.`;
+      errors['username'] = `Sorry, ${username} is taken. Please select another.`;
    }
    
-   // check if username has 4-10 characters. only letters and numebers.
-   if (typeof user_data[username.length] < 10 || typeof user_data[username.length] > 4) {
-      errors['username'] = 'Your username has to be 4 - 10 characters';// if enter invalid length, put wrong
-   }
-
-   //username contains only letters and numbers. show error message if entered other than numbers and letters
-   if (/^[0-9a-zA-Z]+$/.test(typeof user_data[username])) {
-   }
-   else {
-      errors['username'] = 'Username allowed only Letters and Numbers (Ex. jenjen1)';
+     //username contains only letters and numbers. show error message if entered other than numbers and letters
+   if (/^[0-9a-zA-Z]{4,10}$/.test(request.body.username) ==false) {
+        errors['username'] = 'Your username has to be only letters and numbers with 4 - 10 characters (Ex. jenjen1)';
    }
    // check fullname
-   if (/^[A-Za-z, ]+$/.test(typeof user_data[fullname]) == false) {
+   if (/^[A-Za-z, ]+$/.test(request.body.fullname) == false) {
       errors['name'] = 'Please enter YOUR FULL NAME here';
    }
    // check email
@@ -93,7 +86,7 @@ app.post("/register", function (request, response) {
       user_data[username].password = request.body.password;
       user_data[username].email = request.body.email;
 
-      fs.writeFileSync('./user_data.json', JSON.stringify(user_reg_data));
+      fs.writeFileSync('./user_data.json', JSON.stringify(reg_data));
 
       params.append('username', username);
       response.redirect('./invoice.html?' + params.toString());
