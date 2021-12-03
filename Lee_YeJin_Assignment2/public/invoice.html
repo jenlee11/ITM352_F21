@@ -1,9 +1,19 @@
 <script src="./products.js" type="text/javascript"></script>
-<script src="./user_data.js" type="json"></script>
+<script src="/Lee_YeJin_Assignment2/user_data.json" type="json"></script>
 
 <script>
+ let params = (new URL(document.location)).searchParams;
 
-  
+// If logged in, put a welcome message, otherwise send them to login
+if (params.has('username')) {
+    var username = params.get('username');
+}
+// If not logged in, send them to the login page
+else {
+    window.location.href = "./login.html";
+}
+
+
   //based on the example invoice 4 WOD
   function generate_item_rows(product_quantities_array) {
     // This function take an array of quantities in the order of the products array and writes out table rows
@@ -33,8 +43,9 @@
     }
   }
 
-  let params = (new URL(document.location)).searchParams;
+  
   var quantities = [];
+  
   // product quanitities are in the querystring. Get them and put into quantities array
   for (i = 0; i < products.length; i++) {
     if (params.has(`quantity${i}`)) {
@@ -43,6 +54,7 @@
   }
 
   console.log(quantities);
+
 </script>
 <!-- copy of invoice 4-->
 <!DOCTYPE html>
@@ -57,6 +69,7 @@
 </head>
 
 <body>
+ 
   <header>
     <h1>Invoice</h1>
 
@@ -81,6 +94,8 @@
         // Need to define subtotal and total_weight because will be adding to them inside generate_item_rows
         subtotal = 0;
         total_weight = 0;
+      
+        
         generate_item_rows(quantities);
 
         // Compute tax

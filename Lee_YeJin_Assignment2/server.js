@@ -40,8 +40,9 @@ app.use(express.urlencoded({ "extended": true }));
 app.post("/register", function (request, response) {
    // validate registration data
    var errors = {}; // assume no errors
+   var reg_data ={};
    username = request.body.username.toLowerCase();
-   fullname = request.body.name;
+
 
    // check is username is taken
    if (typeof user_data[username] != 'undefined') {
@@ -67,8 +68,8 @@ app.post("/register", function (request, response) {
    }
 
    // check pw-repeat
-   if (request.body.password != request.body.repeat_password) {
-      errors['pw_repeat'] = `Repeat password is not the same as password you typed above`;
+   if (request.body.password != request.body.repeatpassword) {
+      errors['repeatpassword'] = `Repeat password is not the same as password you typed above`;
    }
 
 
