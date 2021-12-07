@@ -1,0 +1,48 @@
+<script src="/user_data.js" type="json"></script>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="login.css" />
+    <title>Login</title>
+</head>
+
+<body>
+    <h2>Login Page</h2>
+    <div class="login">
+
+
+        <script>
+            document.write(`<form name="login" id= "login" action="${location.search}" method="POST">`)</script>
+
+        </script>
+        <label><b>Username</b></label>
+        <input type="text" id="username" name="username" size="40" placeholder="enter username"><br><br>
+        <label><b>Password</b></label>
+        <input type="password" id="password" name="password" size="40" placeholder="enter password"><br><br>
+        <input type="submit" value="Submit" id="submit"><br><br>
+        <input type="checkbox" id="check">
+        <span>Remember me
+        <br><br>
+       <script>
+            document.write(`<p><center> New customer? <br>You can create an acount with us.</p> <a href="./register.html${location.search}"> Sign Up Now!</a></center>`);
+        </script></span>
+        </form>
+    </div>
+</body>
+
+</html>
+<script>
+    let params = (new URL(document.location)).searchParams;
+
+    //do I have errors?
+    if (params.has(`error`)) {
+        alert(params.get(`error`));
+
+    }
+
+</script>

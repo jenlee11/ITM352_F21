@@ -1,0 +1,94 @@
+ 
+ /* General */
+ body,
+ html {
+     height: 100%
+ }
+
+ body,
+ h1,
+ h2,
+ h3,
+ h4,
+ h5,
+ h6 {
+  font-family: "Roboto", "Arial", sans-serif;
+ }
+
+ .products {
+     display: inline-block;
+ }
+
+ .bgimg {
+     background-repeat: no-repeat;
+     background-size: cover;
+     background-color: black;
+     min-height: 70%;
+ }
+
+
+/*  Form styling */
+
+main {
+
+  display: flex;
+  flex-flow: row;
+ 
+}
+
+
+aside {
+  display: flex;
+  align-items: initial;
+  background: url(images/Background.jpeg) no-repeat 50% center;
+
+}
+
+aside div {
+  margin-bottom: 20px;
+}
+
+
+/* Styling the products */
+
+
+section {
+  width: 40%;
+  margin: 5px;
+  box-align: stretch;
+  background-color: white;
+  position: relative;
+  height: 500px;
+}
+
+section p {
+  color: lightsteelblue;
+  line-height: 30px;
+  text-align: center;
+  border-radius: 10%;
+  box-shadow: 2px 2px 1px gainsboro;
+  position: absolute;
+  right: 50px;
+  bottom: 20px;
+  z-index: 2000;
+}
+
+
+.item {
+  background-size: 250px 24px;
+}
+
+
+.item img {
+  
+  width: 450px;
+    height: 300px; 
+    
+    display: inline;
+    position: inherit;
+    bottom: 0px;
+    margin-left: 10px;
+    
+}
+
+
