@@ -79,15 +79,16 @@ app.post("/register", function (request, response) {
 
 
 
-   let params = new URLSearchParams(request.query);
+   let params = new URLSearchParams(request.query); // save quantity data to use in query string
 
    // write registation data if no errors 
    if (Object.keys(errors).length == 0) {
+      // add new user to user_data
       user_data[username] = {};
       user_data[username].password = request.body.password;
       user_data[username].email = request.body.email;
-
-      fs.writeFileSync('./user_data.json', JSON.stringify(reg_data));
+      // write out updated user_data to user_data.json
+      fs.writeFileSync('./user_data.json', JSON.stringify(user_data));
 
       params.append('username', username);
       response.redirect('./invoice.html?' + params.toString());

@@ -21,9 +21,9 @@
           if (typeof errors[register[i].name] != 'undefined') {
             document.getElementById(register[i].name + '_error').innerHTML = errors[register[i].name];
           }
-        }
+        }}
         alert('Please fix the following errors!');
-    }}
+    }
     }
 </script>
 
@@ -39,6 +39,10 @@
 </head>
 
 <body>
+  <script>
+    document.write(`<form action="/register${location.search}" method="POST" name="register">`);
+</script> 
+
   <!-- Copy of example w3school how to create a register form-->
   <form action="/register" method="POST" name="register">
     <div class="container">
@@ -58,9 +62,9 @@
       <span id='repeatpassword_error' style="color: red;"></span>
       <input type="password" placeholder="Repeat Password" name="repeatpassword" id="repeatpassword" required>
 
-      <label for="fullname"><b>fullname</b></label>
-      <span id='fullname_error' style="color: red;"></span>
-      <input type="text" placeholder="Enter name" name="fullname" id="fullname" required>
+      <label for="name"><b>name</b></label>
+      <span id='name_error' style="color: red;"></span>
+      <input type="text" placeholder="Enter name" name="name" id="name" required>
 
       <label for="email"><b>email</b></label>
       <span id='email_error' style="color: red;"></span>

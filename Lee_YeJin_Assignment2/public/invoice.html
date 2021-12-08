@@ -13,6 +13,10 @@ else {
     window.location.href = "./login.html";
 }
 var quantities = [];
+for(let i in products) {
+  if (params.has(`quantity${i}`)) {
+    quantities[i] = params.get(`quantity${i}`);
+}
 
   //based on the example invoice 4 WOD
   function generate_item_rows(product_quantities_array) {
