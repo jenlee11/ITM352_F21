@@ -55,7 +55,7 @@ app.post("/register", function (request, response) {
    }
    // check fullname
    if (/^[A-Za-z, ]+$/.test(request.body.fullname) == false) {
-      errors['name'] = 'Please enter YOUR FULL NAME here';
+      errors['fullname'] = 'Please enter YOUR FULL NAME here';
    }
    // check email
    if (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(request.body.email) == false) {

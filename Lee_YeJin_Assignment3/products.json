@@ -1,37 +1,94 @@
-[
+{
+"Kitchen": [
     {
-    "model": "Door-in-Door",
-    "price": 3959,
-    "image": "instaview door in door.jpeg", 
-    "quantity_available": 10,
-    "weight": 483
-},
-{
-    "model": "Wine Cellar",
-    "price": 6298.99,
-    "image": "wine cellar.jpeg",
-    "quantity_available": 10,
-    "weight": 386
-},
-{
-    "model": "Styler",
-    "price": 1599,
-    "image": "styler.jpeg",
-    "quantity_available": 10,
-    "weight": 207
-},
-{
-    "model": "WashTower",
-    "price": 1899,
-    "image": "WashTower.jpeg",
-    "quantity_available": 10,
-    "weight": 326
-},
-{
-    "model": "CordZero 2 in 1",
-    "price": 649,
-    "image": "cordzero.jpeg",
-    "quantity_available": 10,
-    "weight": 6
-}
+        "model": "Door-in-Door",
+        "price": 3959,
+        "image": "door in door.jpeg",
+        "quantity_available": 10,
+        "weight": 483
+    },
+    {
+        "model": "InstaView",
+        "price": 1998.99,
+        "image": "SideBySideInstaview.webp",
+        "quantity_available": 10,
+        "weight": 295
+    },
+    {
+        "model": "SmoothTouch",
+        "price": 1554,
+        "image": "SmoothT.webp",
+        "quantity_available": 10,
+        "weight": 265
+    }
+],
+"Laundry": [
+    {
+        "model": "WashTower",
+        "price": 1899,
+        "image": "WashTower.jpeg",
+        "quantity_available": 10,
+        "weight": 326
+    },
+    {
+        "model": "WasherDryer Combo",
+        "price": 3199,
+        "image": "Combo.webp",
+        "quantity_available": 10,
+        "weight": 206
+    },
+    {
+        "model": "SideKick",
+        "price": 829,
+        "image": "Pedestal.webp",
+        "quantity_available": 10,
+        "weight": 105
+    }
+],
+"Other Appliances": [
+    {
+        "model": "Styler",
+        "price": 1599,
+        "image": "styler.jpeg",
+        "quantity_available": 10,
+        "weight": 207
+    },
+    {
+        "model": "CordZero 2 in 1",
+        "price": 649,
+        "image": "cordzero.jpeg",
+        "quantity_available": 10,
+        "weight": 6
+    },
+    {
+        "model": "Wifi Wine Cellar",
+        "price": 6999,
+        "image": "wine cellar.jpeg",
+        "quantity_available": 10,
+        "weight": 386
+    }
+],
+"TVs": [
+    {
+        "model": "83inch-OLED",
+        "price": 4999.99,
+        "image": "LGC-1.webp",
+        "quantity_available": 10,
+        "weight": 71
+    },
+    {
+        "model": "86inch-QNED",
+        "price": 2999,
+        "image": "qned.jpeg",
+        "quantity_available": 10,
+        "weight": 110
+    },
+    {
+        "model": "55inch-UHD",
+        "price": 429.99,
+        "image": "uhd.webp",
+        "quantity_available": 10,
+        "weight": 25
+    }
 ]
+}

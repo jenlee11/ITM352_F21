@@ -5,17 +5,17 @@ var app = express();
 var cookieParser = require('cookie-parser');
 app.use(cookieParser());
 
-app.get('/set_cookie', function (request, response){
-// this will send a cookie to the requester (browser). get request and respond with cookie.
-response.cookie('name', 'Jen', {maxAge: 5*1000});
-response.send('The name cookie has been sent!');
+app.get('/set_cookie', function (request, response) {
+    // this will send a cookie to the requester (browser). get request and respond with cookie.
+    response.cookie('name', 'Jen', { maxAge: 5 * 1000 });
+    response.send('The name cookie has been sent!');
 });
 
-app.get('/use_cookie', function (request, response){
+app.get('/use_cookie', function (request, response) {
     // this will get the name cookie from the requester and respond/display a message.
-   // console.log(    request.cookies  );
+    // console.log(    request.cookies  );
     response.send(` Welcome to the Use Cookie page ${request.cookies.name}`);
-    });
+});
 
 
 // recognize the incoming Request Object as strings or arrays
@@ -32,13 +32,13 @@ var filename = 'user_data.json';
 
 if (fs.existsSync(filename)) {
     // have reg data file, so read data and parse into user_data_obj
-        var stats = fs.statSync(filename); //return information about the given file path
-        var data = fs.readFileSync(filename, 'utf-8'); // read the file and return its content.
-        var user_reg_data = JSON.parse(data);
-        console.log(filename + 'has'+ stats["size"] + 'characters');
-    } else {
-        console.log(filename + ' does not exist!');
-    }    
+    var stats = fs.statSync(filename); //return information about the given file path
+    var data = fs.readFileSync(filename, 'utf-8'); // read the file and return its content.
+    var user_reg_data = JSON.parse(data);
+    console.log(filename + 'has' + stats["size"] + 'characters');
+} else {
+    console.log(filename + ' does not exist!');
+}
 
 /*
 var fdr = fs.openSync(filename, 'r');
@@ -66,12 +66,11 @@ app.get("/login", function (request, response) {
     response.send(str);
 });
 
-
 app.get("/register", function (request, response) {
     // Give a simple register form
     str = `
 <body>
-<form action="register" method="POST">
+<form action="" method="POST">
 <input type="text" name="username" size="40" placeholder="enter username" ><br />
 <input type="password" name="password" size="40" placeholder="enter password"><br />
 <input type="password" name="repeat_password" size="40" placeholder="enter password again"><br />
@@ -83,35 +82,34 @@ app.get("/register", function (request, response) {
     response.send(str);
 });
 
+
 app.post("/register", function (request, response) {
-    username = request.body.username;
     // process a simple register form
-    if (typeof users_reg_data[username] == 'undefined' && (request.body.password == request.body.repeat_password)) {
-        users_reg_data[username] = {};
-        users_reg_data[username].password = request.body.password;
-        users_reg_data[username].email = request.body.email;
-
-        fs.writeFileSync('./user_data.json', JSON.stringify(users_reg_data));
-        response.redirect('./login');
-    } else {
-        response.redirect('./register');
-    }
+    username = request.body.username;
+    users_reg_data[username] = {};
+    users_reg_data[username].password = request.body.password;
+    users_reg_data[username].email = request.body.email;
+    console.log(users_reg_data);
+    fs.writeFileSync(filename, JSON.stringify(users_reg_data));
+    response.send('registerd!');
 });
 
-app.post("/login", function (request, response) {
-    // Process login form POST and redirect to logged in page if ok, back to login page if not 
-    let login_username = request.body['username'];
-    let login_password = request.body['password'];
-    // check if username exeist, then check password entered match password stored
-    if (typeof users_reg_data[login_username] != 'undefined') {
-        // take "password" and check if the password in the textbox is right
-        if (users_reg_data[login_username]["password"] == login_password) {
-            // if matches, 
-            response.send(`${login_username} is loged in`);
+
+app.post("/process_login", function (request, response) {
+    // process login form POST and redirect to login
+    console.log(request.body);
+    // checks if the user exists, if yes then get pass
+    if (typeof user_reg_data[request.body['username']] != 'undefined') {
+        userdata = user_reg_data[request.body['username']];
+        console.log(userdata)
+        if (request.body['password'] == userdata.password) {
+            response.send(`thank you for ${request.body['username']} for loggin in`);
         } else {
-            // if the password doesn't match,             
-            response.redirect(`./login`);
+            response.send(` ${request.body['username']} password is incorrect.`);
         }
+    } else {
+        response.send(` ${request.body['username']} does not exist.`);
     }
 });
+
 app.listen(8080, () => console.log(`listening on port 8080`));

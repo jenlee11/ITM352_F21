@@ -2,24 +2,8 @@
 <script src="./user_data.json" type="json"></script>
 
 <script>
- let params = (new URL(document.location)).searchParams;
-
-// If logged in, put a welcome message, otherwise send them to login
-if (params.has('username')) {
-    var username = params.get('username');
-}
-// If not logged in, send them to the login page
-else {
-    window.location.href = "./login.html";
-}
-var quantities = [];
-for(let i in products) {
-  if (params.has(`quantity${i}`)) {
-    quantities[i] = params.get(`quantity${i}`);
-}
-
-  //based on the example invoice 4 WOD
-  function generate_item_rows(product_quantities_array) {
+    //based on the example invoice 4 WOD
+    function generate_item_rows(product_quantities_array) {
     // This function take an array of quantities in the order of the products array and writes out table rows
     for (i in products) {
       if (product_quantities_array[i] == 0) continue; // if no quantities, don't write out anything
@@ -41,15 +25,23 @@ for(let i in products) {
 <td width="13%">\$${products[i].price}</td>
 <td width="13%">\$${extended_price}</td>
 
-
 </tr>
 `);
     }
   }
 
-  
-  
-  
+ let params = (new URL(document.location)).searchParams;
+
+
+if  (!params.has('username')) {
+    window.location.href = "./login.html";
+}
+var quantities = [];
+for(let i in products) {
+  if (params.has(`quantity${i}`)) {
+    quantities[i] = params.get(`quantity${i}`);
+}
+}
   // product quanitities are in the querystring. Get them and put into quantities array
   for (i = 0; i < products.length; i++) {
     if (params.has(`quantity${i}`)) {
@@ -76,7 +68,9 @@ for(let i in products) {
  
   <header>
     <h1>Invoice</h1>
-
+<h2> <script>
+  document.write(`Thank you for your order ${params.get('username')}`);
+</script></h2>
   </header>
   <article>
   <table border="2" table class="inventory">
