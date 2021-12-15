@@ -20,10 +20,10 @@
             document.write(`<form name="login" id= "login" action="${location.search}" method="POST">`)</script>
 
         </script>
-        <label><b>Username</b></label>
-        <input type="text" id="username" name="username" size="40" placeholder="enter username"><br><br>
-        <label><b>Password</b></label>
-        <input type="password" id="password" name="password" size="40" placeholder="enter password"><br><br>
+        <label for="username"><b>Username</b></label>
+        <input type="text" id="username" name="username" size="40" placeholder="enter username" required><br><br>
+        <label for="password"><b>Password</b></label>
+        <input type="password" id="password" name="password" size="40" placeholder="enter password" required><br><br>
         <input type="submit" value="Submit" id="submit"><br><br>
         <input type="checkbox" id="check">
         <span>Remember me
@@ -38,11 +38,12 @@
 </html>
 <script>
     let params = (new URL(document.location)).searchParams;
-
+window.onload = function() {
     //do I have errors?
     if (params.has(`error`)) {
         alert(params.get(`error`));
-
     }
-
+if (params.has('username')) {
+    username.value = params.get('username')}
+}
 </script>

@@ -17,9 +17,9 @@
       // put reg data into form elements (make a loop)
             // make register form sticky
             for (i = 0; i < register.elements.length; i++) {
-              register[i].value = reg_data[register[i].fullname];
-          if (typeof errors[register[i].fullname] != 'undefined') {
-            document.getElementById(register[i].fullname + '_error').innerHTML = errors[register[i].fullname];
+              register[i].value = reg_data[register[i].name];
+          if (typeof errors[register[i].name] != 'undefined') {
+            document.getElementById(register[i].name + '_error').innerHTML = errors[register[i].name];
           }
         }
         alert('Please fix the following errors!');
@@ -61,9 +61,9 @@
       <span id='repeatpassword_error' style="color: red;"></span>
       <input type="password" placeholder="Repeat Password" name="repeatpassword" id="repeatpassword" required>
 
-      <label for="fullname"><b>fullname</b></label>
-      <span id='fullname_error' style="color: red;"></span>
-      <input type="text" placeholder="Enter name" name="fullname" id="fullname" required>
+      <label for="name"><b>name</b></label>
+      <span id='name_error' style="color: red;"></span>
+      <input type="text" placeholder="Enter name" name="name" id="name" required>
 
       <label for="email"><b>email</b></label>
       <span id='email_error' style="color: red;"></span>

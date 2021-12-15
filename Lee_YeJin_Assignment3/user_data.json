@@ -18,5 +18,15 @@
         "name": "jen",
         "password": "password",
         "email": "yejinj@hawaii.edu"
+    },
+    "321a": {
+        "name": "Ye Jin Lee",
+        "password": "undefined",
+        "email": "yewonjoo@hawaii.edu"
+    },
+    "test1111": {
+        "name": "Ye Jin Lee",
+        "password": "12341234",
+        "email": "yeye090@gmail.com"
     }
 }

@@ -1,12 +1,224 @@
+<script src="./products.js" type="text/javascript"></script>
+
+<script>
+    // This function asks the server for a "service" and converts the response to text. 
+    function loadJSON(service, callback) {
+        var xobj = new XMLHttpRequest();
+        xobj.overrideMimeType("application/json");
+        xobj.open('POST', service, false);
+        xobj.onreadystatechange = function () {
+            if (xobj.readyState == 4 && xobj.status == "200") {
+                // Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
+                callback(xobj.responseText);
+            }
+        };
+        xobj.send(null);
+    }
+
+
+    let params = (new URL(document.location)).searchParams;
+    // get shopping cart data
+    var cart_data;
+    loadJSON('/get_cart_data', function (data) { cart_data = JSON.parse(data); });
+    console.log(cart_data, products);
+
+
+</script>
+<!-- copy of invoice 4-->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+    <link href="./invoice-style.css" rel="stylesheet">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cart</title>
+    <title>Your Invoice</title>
 </head>
+
 <body>
-    
+
+    <header>
+        <h1>Invoice</h1>
+        <h2>
+            <script>
+        
+
+                // set a cookie https://www.w3schools.com/js/js_cookies.asp
+                function getCookie(cname) {
+                    var name = cname + "=";
+                    var decodedCookie = decodeURIComponent(document.cookie);
+                    var ca = decodedCookie.split(';');
+                    for (var i = 0; i < ca.length; i++) {
+                        var c = ca[i];
+                        while (c.charAt(0) == ' ') {
+                            c = c.substring(1);
+                        }
+                        if (c.indexOf(name) == 0) {
+                            return c.substring(name.length, c.length);
+                        }
+                    }
+                    return "";
+                };
+
+            </script>
+        </h2>
+    </header>
+    <article>
+        <table border="2" table class="inventory">
+            <thead>
+                <tr>
+                    <th><span>Model</span></th>
+                    <th><span>Quantity</span></th>
+                    <th><span>Weight (lb)</span></th>
+                    <th><span>Extended weight</span></th>
+                    <th><span>Price</span></th>
+                    <th><span>Extended price</span></th>
+
+                </tr>
+            </thead>
+            <tbody>
+
+<form action"./update_cart" method="POST">
+                <script>
+
+                    if (getCookie('user_info') != false) {
+                        var user_info = JSON.parse(getCookie('user_info'));
+                        console.log(user_info);
+                        document.write(`Welcome, ${user_info["name"]}!`); // If the user has a cookie called "user_info", welcome them by name
+                    } else {
+                        document.write(`User not logged in`); // If the user does not have a cookie called "user_info", display not logged in msg
+                    };
+
+                    // Need to define subtotal and total_weight because will be adding to them inside generate_item_rows
+                    subtotal = 0;
+                    total_weight = 0;
+
+
+                    // This function take an array of quantities in the order of the products array and writes out table rows
+                    for (let prod_key in cart_data) {
+                        var product_quantities_array = cart_data[prod_key];
+                        for (let i in product_quantities_array) {
+                            console.log(prod_key, i);
+                            if (product_quantities_array[i] == 0) continue; // if no quantities, don't write out anything
+
+                            // calculate the subtotals and total_weight and write extended_price and extended_weight
+
+                            extended_price = products[prod_key][i].price * product_quantities_array[i];
+                            subtotal += extended_price;
+                            extended_weight = products[prod_key][i].weight * product_quantities_array[i];
+                            total_weight += extended_weight;
+
+                            //wirtes out a table row assuming we're inside the table element.(*only creates table rows)
+                            document.write(`
+<tr>
+<td width="43%">${products[prod_key][i].model}</td>
+<td align="center" width="10%" contenteditable>${product_quantities_array[i]}</td>
+<td width="13%">${products[prod_key][i].weight}</td>
+<td width="13%">${extended_weight}</td>
+<td width="13%">\$${products[prod_key][i].price}</td>
+<td width="13%">\$${extended_price}</td>
+
+</tr>
+`);
+                        }
+                    }
+
+                    // Compute tax
+                    var tax_rate = 0.0471;
+                    var tax = subtotal * tax_rate;
+
+                    // Compute shipping // change it to suitable for appliances *weight ..
+
+                    if (total_weight <= 10) {
+                        shipping = 50;
+                    }
+                    else if (total_weight <= 500) {
+                        shipping = 200;
+                    }
+                    else {
+                        shipping = 300;
+                    }
+
+                    // Compute grand total
+                    var total = subtotal + tax + shipping;
+
+
+
+
+                </script>
+                <table class="balance">
+
+                    <tr>
+                        <td><span>Sub-total</span></td>
+                        <td><span>$
+                                <script>document.write(subtotal.toFixed(2));</script>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span>Tax @ 4.71%</span>
+                        </td>
+                        <td><span>$
+                                <script>document.write(tax.toFixed(2));</script>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Total weight</td>
+                        <td><span>
+                                <script>document.write(total_weight);</script> lb
+                            </span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><span>Shipping</span></td>
+                        <td><span>$
+                                <script>document.write(shipping.toFixed(2));</script>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span><strong>Total</strong></span></td>
+                        <td><span><strong>$
+                                    <script>document.write(total.toFixed(2));</script></span>
+                            </strong></td>
+                    </tr>
+            </tbody>
+        </table>
+    </article>
+    </form>
+    <script>
+        //submit button that updates the cart
+         document.write(`
+     <tr>                
+     <td align="center" colspan="4" width="100%"><input type="button" class="button4" value="update" id="cart_button"></td>
+     </tr>
+     `)
+    </script>
+    <aside>
+        <div>
+            <form action="/Complete_Purchase" method="POST">
+                <input type=submit class="button4" value="Check Out" ><br><br>
+                <input type=submit class="button4" value="Email E-Receipt">
+            </form>
+
+            <br><br><br>
+            <h1><b>OUR SHIPPING POLICY IS:</b></h1>
+            Weight under 10 lb will be $50 shipping<br>
+            Weight 11 ~ 500 lb will be $200 shipping<br>
+            Weight over 500 lb will be $300 shipping<br>
+            </p>
+        </div>
+    </aside>
+    <br>
+
+    <!-- Keep shopping in navbar on the home page -->
+    <input type=submit class="button4" id="to_home" value="Continue Shopping"
+        onclick="window.location.href = './products_display.html?prod_key=products_display.html' + document.location.search;">
+
+
 </body>
+
 </html>
