@@ -239,28 +239,32 @@ app.post("/add_cart", function (request, response) {
 
 //Update cart
 app.post('/update_cart', function (request, response, next) {
-   console.log(request.body);
    var updated_cart = request.body;
    var errors = {}; //start with no errors
+   // check if inventory is available for update
+   for(let pk in request.session.cart){
+      for(let i in request.session.cart[pk]) {
+         if(typeof request.body[`update_quantity_${pk}_${i}`] != 'undefined') {
+           // check if new quantity wanted is available
+            let q_wanted = Number(request.body[`update_quantity_${pk}_${i}`]);
+            if(q_wanted > products[pk][i].quantity_available){
+               errors[`unavailable_${pk}_${i}`] = `Sorry, ${q_wanted} ${products[pk][i].model} are not available anymore.`;
+            }
+         }
+      }
+   }
+
    
-   // borrowed from classmate
-   //modify inventory from the difference of cart and update
+   //no errors so update cart in session
    if (Object.keys(errors).length == 0) {
-       //modify inventory from the difference of cart and update
-       for (let prod_key in products) {
-
-           // trying to fix the null error (thank you professor port)
-           for (let i in products[prod_key]) {
-               if (typeof updated_cart[`cart_${prod_key}_${i}`] == 'undefined') {
-                   continue;
-               }
-
-               //get the difference between cart and inventory
-               let diff = request.session.cart[prod_key][i] - updated_cart[`cart_${prod_key}_${i}`];
-               products_array[product_key][i].quantity_available += diff;
-               request.session.cart[prod_key][i] = Number(updated_cart[`cart_${prod_key}_${i}`]);
-           }
-       }
+      for(let pk in request.session.cart){
+         for(let i in request.session.cart[pk]) {
+            if(typeof request.body[`update_quantity_${pk}_${i}`] != 'undefined') {
+              // overwrite cart quantity with update cart quantity
+               request.session.cart[pk][i] = Number(request.body[`update_quantity_${pk}_${i}`]);
+            }
+         }
+      }
    }
 
    let params = new URLSearchParams();
@@ -277,6 +281,7 @@ app.post('/update_cart', function (request, response, next) {
 
 // sets up mail server. Copy of Assignment example 3.
 app.post('/Complete_Purchase', function (request, response, next) {
+   
    // chek if logged in. If not, redirect to login
    if(typeof request.cookies["user_info"] == 'undefined') {
       response.redirect('./login.html');

@@ -17,6 +17,19 @@
 
 
     let params = (new URL(document.location)).searchParams;
+    if (params.has('errors')) {
+            var errors = JSON.parse(params.get('errors'));
+            let err_str = '';
+            for (err in errors) {
+                err_str += errors[err] + '\n';
+            }
+            if(err_str == '') {
+                alert('Your cart has been updated');
+            } else {
+                alert(err_str + '\nYour cart has NOT been updated'); 
+            }
+    }
+
     // get shopping cart data
     var cart_data;
     loadJSON('/get_cart_data', function (data) { cart_data = JSON.parse(data); });
@@ -79,7 +92,7 @@
             </thead>
             <tbody>
 
-<form action"./update_cart" method="POST">
+<form action="./update_cart" method="POST">
                 <script>
 
                     if (getCookie('user_info') != false) {
@@ -113,7 +126,7 @@
                             document.write(`
 <tr>
 <td width="43%">${products[prod_key][i].model}</td>
-<td align="center" width="10%" contenteditable>${product_quantities_array[i]}</td>
+<td align="center" width="10%"><input type="number" min=0 max=${products[prod_key][i].quantity_available} value="${product_quantities_array[i]}" name="update_quantity_${prod_key}_${i}" ></td>
 <td width="13%">${products[prod_key][i].weight}</td>
 <td width="13%">${extended_weight}</td>
 <td width="13%">\$${products[prod_key][i].price}</td>
@@ -185,23 +198,19 @@
                                     <script>document.write(total.toFixed(2));</script></span>
                             </strong></td>
                     </tr>
+                    <tr>                
+                        <td align="center" colspan="4" width="100%"><input type="submit" class="button4" value="update" id="cart_button"></td>
+                        </tr>  
             </tbody>
         </table>
+
     </article>
     </form>
-    <script>
-        //submit button that updates the cart
-         document.write(`
-     <tr>                
-     <td align="center" colspan="4" width="100%"><input type="button" class="button4" value="update" id="cart_button"></td>
-     </tr>
-     `)
-    </script>
+
     <aside>
         <div>
             <form action="/Complete_Purchase" method="POST">
                 <input type=submit class="button4" value="Check Out" ><br><br>
-                <input type=submit class="button4" value="Email E-Receipt">
             </form>
 
             <br><br><br>
@@ -215,8 +224,8 @@
     <br>
 
     <!-- Keep shopping in navbar on the home page -->
-    <input type=submit class="button4" id="to_home" value="Continue Shopping"
-        onclick="window.location.href = './products_display.html?prod_key=products_display.html' + document.location.search;">
+    <input type=button class="button4" id="to_home" value="Continue Shopping"
+        onclick="window.location.href = './products_display.html' + document.location.search">
 
 
 </body>

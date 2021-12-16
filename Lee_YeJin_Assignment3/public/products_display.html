@@ -2,7 +2,7 @@
 <!--copy of example Assignment1_2 file from design example -->
 
 <script>
-    var producttype = "";
+    
 
     function isNonNegInt(q, return_errors = false) {
         errors = []; // assume no errors at first
@@ -20,8 +20,9 @@
         document.getElementById(theTextbox.name + '_label').innerHTML = errs.join(", ");
     }
     var params = (new URL(document.location)).searchParams; // get the query string which has the form data
-    if (params.has(`producttype`)) {
-        producttype = params.get(`producttype`);
+    var producttype = "Kitchen"; // default product page
+    if (params.has(`prod_key`)) {
+        producttype = params.get(`prod_key`);
     }
     window.onload = function () {
 
@@ -64,22 +65,7 @@
 </head>
 
 <body>
-    <script>
-        //Borrowed codes from Example2
-        var products_data;
-        var total = 0;
-        loadJSON('get_cart_data', function (response) {
-            // Parsing JSON string into object
-            shopping_cart = JSON.parse(response);
-            for (pk in shopping_cart) {
-                total += shopping_cart[pk].reduce((a, b) => a + b);
-            }
-        });
 
-        nav_bar(prod_key, products);
-
-        cart_total.innerHTML = total;
-    </script>
 
     <!-- Navbar (sit on top) -->
     
@@ -93,7 +79,7 @@
 
                     <script>
                         for (let prod_key in products) {
-                            document.write(`<a href="${'./products_display.html?producttype=' + prod_key}">${prod_key}</a>`);
+                            document.write(`<a href="${'./products_display.html?prod_key=' + prod_key}">${prod_key}</a>`);
                         }
                     </script>
                 </div>
@@ -135,21 +121,7 @@
                     document.write(`<h1 class="w3-center w3-jumbo" style="margin-bottom:50px">${producttype}</h1>`);
                 </script>
                 <form action="./add_cart" method="POST" name="product_selection_form">
-<!--get username cookie to display name and amt in cart-->
-            <!--credits to kimberly matutina for getCookie-->
-            <script>
-                if (getCookie('user_info') != false) {
-                    var user_info = JSON.parse(getCookie('user_info'));
-                    // if the user has a cookie called "user_info", welcome them by name
-                    document.write(`Welcome, ${user_info["name"]}`); 
-                 
 
-                } else {
-                    // if the user does not have a cookie called "user_info", display not logged in msg
-                    document.write(`You are not logged in.`); 
-                };
-
-            </script>
             <br>
                     <!-- the server is going to post the form to process_form -->
                     <div>
@@ -186,26 +158,29 @@
                 <!-- keep up with inventory copied and modified from Lab 13 order_page.html-->
                 <script>
                     var q = params.get('quantity');
-                    // get quantity from query string if it exists
-
-                    let model = products[producttype][0]['model'];
-                    let model_price = products[producttype][0]['price'];
-
-                    if (params.has(`error`)) {
+                // get quantity from query string if it exists
+            
+                let model = products[0]['model'];
+                let model_price = products[0]['price'];
+            
+                if(params.has(`error`)){
                         document.write(params.get(`error`));
                     }
-                    if (params.has('quantity')) {
-                        // if there are quantities, put them in the quantity textbox
-
-
-                    };
-
-                    for (i in products[producttype]) {
-                        document.write(`<h4>${products[producttype][i]["total_sold"]} ${products[producttype][i]["model"]} have been sold!</h4>`);
-                    };
-                    document.write(`<h3>${products[producttype][0]["model"]} at \$${products[producttype][0]["price"]}</h3>`);
+                if (params.has('quantity')) {
+                   // no value no response
+            
+                    if (isNonNegInt(q)) {
+                        //products[0].total_sold -= Number(q);
+                        document.write(`<h2>Thank you for purchasing ${q} ${model}. Your total is \$${q * model_price}!</h2> `);
+                    } 
+                    window.stop();
+                };
+            
+                for (i in products) {
+                    document.write(`<h4>${products[i]["total_sold"]} ${products[i]["model"]} have been sold!</h4>`);
+                };
+                    document.write(`<h3>${products[0]["model"]} at \$${products[0]["price"]}</h3>`);
                 </script>
-
 
                 <!-- About Container -->
                 <div class="w3-container w3-padding-64 w3-red w3-grayscale w3-xlarge" id="about">
