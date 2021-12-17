@@ -23,10 +23,9 @@ if (fs.existsSync(filename)) {
    // have reg data file, so read data and parse into user_data_obj
    var file_stats = fs.statSync(filename); //return information about the given file path
    var data = fs.readFileSync(filename, 'utf-8'); // read the file and return its content.
-   var user_data = JSON.parse(data);
-   console.log(`${filename} has ${file_stats.size} characters`);
-} else {
-   console.log(filename + ' does not exist!');
+   var user_data = JSON.parse(fs.readFileSync(filename, 'utf-8'));
+   } else {
+   console.log(`${filename} does not exist!`);
 }
 
 // It goes down through the order of the following. If matched, it excutes the function.
@@ -52,9 +51,9 @@ app.post("/register", function (request, response) {
    // validate registration data
    var errors = {}; // assume no errors
    var reg_data = {};
-   var loginMessage_str = ''; //login message
+   var loginMsg_str = ''; //welcome message
 
-  var username = request.body['username'].toLowerCase();
+   var username = request.body['username'].toLowerCase();
 
 
    // check is username is taken
@@ -66,9 +65,9 @@ app.post("/register", function (request, response) {
    if (/^[0-9a-zA-Z]{4,10}$/.test(request.body.username) == false) {
       errors['username'] = 'Your username has to be only letters and numbers with 4 - 10 characters (Ex. jenjen1)';
    }
-   // check fullname
-   if (/^[A-Za-z, ]+$/.test(request.body.fullname) == false) {
-      errors['fullname'] = 'Please enter YOUR FULL NAME here';
+   // check name
+   if (/^[A-Za-z, ]+$/.test(request.body.name) == false) {
+      errors['name'] = 'Please enter YOUR FULL NAME here';
    }
    // check email
    if (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(request.body.email) == false) {
@@ -86,7 +85,6 @@ app.post("/register", function (request, response) {
    }
 
 
-
    let params = new URLSearchParams(); // save quantity data to use in query string
 
    // write registation data if no errors 
@@ -96,11 +94,17 @@ app.post("/register", function (request, response) {
       user_data[username].name = request.body.name;
       user_data[username].password = request.body.password;
       user_data[username].email = request.body.email;
+
+      //show welcom message when registered successfully
+      loginMsg_str = `<script>alert('${user_data[username].name} Registered! Please login to proceed');
+      location.href = "${'./login.html'}";
+      </script>`;
       // write out updated user_data to user_data.json
       fs.writeFileSync('./user_data.json', JSON.stringify(user_data));
       var user_info = { "username": username, "name": user_data[username].name, "email": user_data[username].email };
       response.cookie('user_info', JSON.stringify(user_info), { maxAge: 30 * 60 * 1000 });
-      response.redirect('./index.html');
+      response.send(loginMsg_str);
+      response.redirect('./products_display.html');
 
    } else {
       // put reg data in params
@@ -115,25 +119,26 @@ app.post("/register", function (request, response) {
 // Login
 
 app.post("/login.html", function (request, response) {
+   
    let params = new URLSearchParams(request.query);
+   var username = request.body['username'].toLowerCase(); 
+    var errors = {};
+   var loginMsg_str = '';
 
-   // Process login form POST and redirect to logged in page if ok, back to login page if not 
-   var login_username = request.body['username'].toLowerCase();
-   var login_password = request.body['password'];
+
    // check if username exeist, then check password entered match password stored
-   if (typeof user_data[login_username] != 'undefined') {
+   if (typeof user_data[username] != 'undefined') {
       // take "password" and check if the password in the textbox is right
-      if (user_data[login_username].password == login_password) {
-
+      if (user_data[username].password == request.body.password) {
+  loginMsg_str = `<script>alert('${username} logged in!);
+      location.href = "${'./products_display.html?prod_key=Kitchen'}";
+      </script>`;
          //set a exp of 30 minutes.
-         var user_info = { "username": login_username, "email": user_data[login_username].email, "name": user_data[login_username].name };
+         var user_info = { "username": username, "email": user_data[username].email, "name": user_data[username].name };
          response.cookie('user_info', JSON.stringify(user_info), { maxAge: 30 * 60 * 1000 });
-
-
-         
-         //send back to the products display page
-         response.redirect('./index.html?' + stringify(request.query));
-         return;
+         //message that displays after login
+         response.send(loginMsg_str);
+      
       } else {
          // if the password doesn't match,   
          params.append(`error`, 'password not correct');
@@ -184,9 +189,10 @@ app.post("/add_cart", function (request, response) {
    var errors = {}; // assume no errors
    let has_quantities = false;
    var prod_key = request.body["producttype"];
+  
 
    for (i in products[prod_key]) {
-      let q = request.body[`quantity${i}`];
+      var q = request.body[`quantity${i}`];
       // Check is quantity is non-neg integer
       if (isNonNegInt(q) == false) {
          errors['not_quantity' + i] = `${q} is not a valid quantity for  ${products[prod_key][i].model}.`;
@@ -211,6 +217,9 @@ app.post("/add_cart", function (request, response) {
 
    // Add quantities to cart if no errors, send user back to products_display.html with error messages if error
    if (Object.keys(errors).length == 0) {
+      // keep up inventory available removing purchased items
+      products[prod_key][i].quantity_available -= Number(request.body[`quantity${i}`]);
+            AddedItem_msg = `<script>alert('Your ${`prod_key${i}`} has been added in your cart!'); location.href="./products_display.html";</script>`;
       // add quantities to cart (put into session)
       if (typeof request.session.cart == 'undefined') {
          request.session.cart = {};
@@ -222,7 +231,10 @@ app.post("/add_cart", function (request, response) {
          request.session.cart[prod_key][i] = Number(request.body[`quantity${i}`]);
       }
       console.log(request.session.cart);
-      response.redirect(`./cart.html`);
+      response.send(AddedItem_msg);
+      response.redirect(`./products_display.html`);
+      
+      
    }
    else {
       // oops, had errors, so redirect back to productss_display.html wioth the errors
@@ -242,25 +254,25 @@ app.post('/update_cart', function (request, response, next) {
    var updated_cart = request.body;
    var errors = {}; //start with no errors
    // check if inventory is available for update
-   for(let pk in request.session.cart){
-      for(let i in request.session.cart[pk]) {
-         if(typeof request.body[`update_quantity_${pk}_${i}`] != 'undefined') {
-           // check if new quantity wanted is available
+   for (let pk in request.session.cart) {
+      for (let i in request.session.cart[pk]) {
+         if (typeof request.body[`update_quantity_${pk}_${i}`] != 'undefined') {
+            // check if new quantity wanted is available
             let q_wanted = Number(request.body[`update_quantity_${pk}_${i}`]);
-            if(q_wanted > products[pk][i].quantity_available){
+            if (q_wanted > products[pk][i].quantity_available) {
                errors[`unavailable_${pk}_${i}`] = `Sorry, ${q_wanted} ${products[pk][i].model} are not available anymore.`;
             }
          }
       }
    }
 
-   
+
    //no errors so update cart in session
    if (Object.keys(errors).length == 0) {
-      for(let pk in request.session.cart){
-         for(let i in request.session.cart[pk]) {
-            if(typeof request.body[`update_quantity_${pk}_${i}`] != 'undefined') {
-              // overwrite cart quantity with update cart quantity
+      for (let pk in request.session.cart) {
+         for (let i in request.session.cart[pk]) {
+            if (typeof request.body[`update_quantity_${pk}_${i}`] != 'undefined') {
+               // overwrite cart quantity with update cart quantity
                request.session.cart[pk][i] = Number(request.body[`update_quantity_${pk}_${i}`]);
             }
          }
@@ -281,17 +293,22 @@ app.post('/update_cart', function (request, response, next) {
 
 // sets up mail server. Copy of Assignment example 3.
 app.post('/Complete_Purchase', function (request, response, next) {
-   
+
    // chek if logged in. If not, redirect to login
-   if(typeof request.cookies["user_info"] == 'undefined') {
+   if (typeof request.cookies["user_info"] == 'undefined') {
       response.redirect('./login.html');
-   return;
-   }
+      return;
+   } else {
    var user_info = JSON.parse(request.cookies["user_info"]); //user_info into JSON
    var user_email = user_info["email"]; //save users' email
 
    //Generate HTML invoice table
-   var invoice_str = ` <table border="2" table class="inventory">
+   var invoice_str = ` <link rel="stylesheet" typa="text/css" href="./invoice-style.css">
+    <header>
+   <h1>Invoice</h1></header>
+   
+   <table border="2" table class="inventory">
+   <h3> Thank you for your order ${user_info.name}!<br>
    <thead>
      <tr>
      <th><span>Model</span></th>
@@ -303,18 +320,101 @@ app.post('/Complete_Purchase', function (request, response, next) {
 
    </tr>`;
    var shopping_cart = request.session.cart;
+   subtotal = 0;
+   total_weight =0;
+
    for (prod_key in products) {
       for (i = 0; i < products[prod_key].length; i++) {
          if (typeof shopping_cart[prod_key] == 'undefined') continue;
          qty = shopping_cart[prod_key][i];
+       
          if (qty > 0) {
-            invoice_str += `<tr><td>${qty}</td><td>${products[prod_key][i].model}</td><tr>`;
-         }
-      }
-   }
-   invoice_str += '</table>';
+
+            // calculate the subtotals and total_weight and write extended_price and extended_weight
+            extended_price = products[prod_key][i].price * qty;
+            subtotal += extended_price;
+            extended_weight = products[prod_key][i].weight * qty;
+            total_weight += extended_weight;
+         
+      
+   
+   invoice_str += `<tr>
+   <td width="43%">${products[prod_key][i].model}</td>
+   <td align="center" width="10%"><input type="number" min=0 max=${products[prod_key][i].quantity_available} value="${qty}" name="update_quantity_${prod_key}_${i}" ></td>
+   <td width="13%">${products[prod_key][i].weight}</td>
+   <td width="13%">${extended_weight}</td>
+   <td width="13%">\$${products[prod_key][i].price}</td>
+   <td width="13%">\$${extended_price}</td>
+   
+   </tr>`;
+}
+      };
+}
+
+// Compute tax
+var tax_rate = 0.0471;
+var tax = subtotal * tax_rate;
+
+// Compute shipping // change it to suitable for appliances *weight ..
+
+if (total_weight == 0) {
+   shipping = 0;
+}
+else if (total_weight <= 10) {
+   shipping = 50;
+}
+else if (total_weight <= 500) {
+    shipping = 200;
+}
+else {
+    shipping = 300;
+}
+
+// Compute grand total
+var total = subtotal + tax + shipping;
+
+invoice_str +=` <article>
+<table class="balance">
+<tbody>
+<tr>
+    <td><span>Sub-total</span></td>
+    <td><span>$${subtotal.toFixed(2)}</span></td>
+</tr>
+<tr>
+    <td><span>Tax @ 4.71%</span>
+    </td>
+    <td><span>$${tax.toFixed(2)}</span></td>
+</tr>
+<tr>
+    <td>Total weight</td>
+    <td><span>${total_weight}lb</span></td>
+</tr>
+<tr>
+    <td><span>Shipping</span></td>
+    <td><span>$${shipping.toFixed(2)}</span></td>
+    </tr>
+<tr>
+    <td><span><strong>Total</strong></span></td>
+    <td><span><strong>$${total.toFixed(2)}</span></strong></td>
+</tr></tbody>
+</table> </article>
 
 
+<aside>
+<div>
+    <p></p><br><br><br><p><br><br><br><br><br><br>
+    <br><br><br>
+    <h1><b>OUR SHIPPING POLICY IS:</b></h1>
+    Weight under 10 lb will be $50 shipping<br>
+    Weight 11 ~ 500 lb will be $200 shipping<br>
+    Weight over 500 lb will be $300 shipping<br>
+    </p>
+</div>
+</aside>
+<br>
+
+<br><br><a href="./index.html"> Continue Shopping! </a>
+`;
 
    // sets up mail server. Copy of Assignment example 3.
    //only will work on UH network due to security restrictions
@@ -337,15 +437,15 @@ app.post('/Complete_Purchase', function (request, response, next) {
    transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
          invoice_str += '<br>There was an error and your invoice could not be emailed :('; //if invoice unable to send
-       } else {
-         invoice_str += `<br>Your invoice was mailed to ${user_data[username].email}`;
-       }
-       response.clearCookie('user_info'); //destroys cookie
-       request.session.destroy(); //delete the session, once email is sent
-       response.send(invoice_str);
-    
-     });
+      } else {
+         invoice_str += `<br>Your invoice was mailed to ${user_email}`;
+      }
+      response.clearCookie('user_info'); //destroys cookie
+      request.session.destroy(); //delete the session, once email is sent
+      response.send(invoice_str);
 
+   });
+   }
 });
 
 

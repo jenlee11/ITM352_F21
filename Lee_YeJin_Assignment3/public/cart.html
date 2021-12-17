@@ -143,7 +143,10 @@
 
                     // Compute shipping // change it to suitable for appliances *weight ..
 
-                    if (total_weight <= 10) {
+                    if (total_weight == 0) {
+                        shipping = 0;
+                    }
+                    else if (total_weight <= 10) {
                         shipping = 50;
                     }
                     else if (total_weight <= 500) {
