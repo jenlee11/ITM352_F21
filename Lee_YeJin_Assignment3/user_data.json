@@ -1,1 +1,82 @@
-{"itm352":{"name":"ITM 352","password":"grader","email":"itm352@hawaii.edu"},"dport":{"name":"Dan Port","password":"portspassword","email":"dport@hawaii.edu"},"kazman":{"name":"Rick Kazman","password":"kazmanpassword","email":"kazman@hawaii.edu"},"jenjen":{"name":"jen","password":"password","email":"yejinj@hawaii.edu"},"321a":{"name":"Ye Jin Lee","password":"undefined","email":"yewonjoo@hawaii.edu"},"test1111":{"name":"Ye Jin Lee","password":"12341234","email":"yeye090@gmail.com"},"test123":{"name":"Kat","password":"12341234","email":"hi@hi.com"},"test1234":{"name":"Kung Pao","password":"1234asdf","email":"f@d.com"},"test12345":{"name":"baobao","password":"1234qwer","email":"bao@d.com"},"jenjentest":{"name":"hi aloha","password":"1234qwer","email":"me@mg.com"}}
+{
+    "itm352": {
+        "name": "ITM 352",
+        "password": "grader",
+        "email": "itm352@hawaii.edu"
+    },
+    "dport": {
+        "name": "Dan Port",
+        "password": "portspassword",
+        "email": "dport@hawaii.edu"
+    },
+    "kazman": {
+        "name": "Rick Kazman",
+        "password": "kazmanpassword",
+        "email": "kazman@hawaii.edu"
+    },
+    "jenjen": {
+        "name": "jen",
+        "password": "password",
+        "email": "yejinj@hawaii.edu"
+    },
+    "321a": {
+        "name": "Ye Jin Lee",
+        "password": "undefined",
+        "email": "yewonjoo@hawaii.edu"
+    },
+    "test1111": {
+        "name": "Ye Jin Lee",
+        "password": "12341234",
+        "email": "yeye090@gmail.com"
+    },
+    "test123": {
+        "name": "Kat",
+        "password": "12341234",
+        "email": "hi@hi.com"
+    },
+    "test1234": {
+        "name": "Kung Pao",
+        "password": "1234asdf",
+        "email": "f@d.com"
+    },
+    "test12345": {
+        "name": "baobao",
+        "password": "1234qwer",
+        "email": "bao@d.com"
+    },
+    "jenjentest": {
+        "name": "hi aloha",
+        "password": "1234qwer",
+        "email": "me@mg.com"
+    },
+    "test1357": {
+        "name": "Jin",
+        "password": "1234qwer",
+        "email": "yewonjoo@hawaii.edu"
+    },
+    "test13579": {
+        "name": "Lim",
+        "password": "1234qwer",
+        "email": "yejinj@hawaii.edu"
+    },
+    "test135791": {
+        "name": "Ye Jin Lee",
+        "password": "1234qwer",
+        "email": "yejinj@hawaii.edu"
+    },
+    "test12": {
+        "name": "Ye Jin Lee",
+        "password": "1234qwer",
+        "email": "yejinj@hawaii.edu"
+    },
+    "test122": {
+        "name": "Ye Jin Lee",
+        "password": "1234qwer",
+        "email": "yejinj@hawaii.edu"
+    },
+    "test24": {
+        "name": "Ye Jin Lee",
+        "password": "1234qwer",
+        "email": "yewonjoo@hawaii.edu"
+    }
+}

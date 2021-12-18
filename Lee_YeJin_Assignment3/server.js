@@ -24,7 +24,7 @@ if (fs.existsSync(filename)) {
    var file_stats = fs.statSync(filename); //return information about the given file path
    var data = fs.readFileSync(filename, 'utf-8'); // read the file and return its content.
    var user_data = JSON.parse(fs.readFileSync(filename, 'utf-8'));
-   } else {
+} else {
    console.log(`${filename} does not exist!`);
 }
 
@@ -45,7 +45,7 @@ app.use(express.urlencoded({ "extended": true }));
 app.use(session({ secret: "MySecretKey", resave: true, saveUninitialized: true }));
 
 
-// Registration
+///////////////////////////////////////////// Registration
 
 app.post("/register", function (request, response) {
    // validate registration data
@@ -95,16 +95,13 @@ app.post("/register", function (request, response) {
       user_data[username].password = request.body.password;
       user_data[username].email = request.body.email;
 
-      //show welcom message when registered successfully
+      // write out updated user_data to user_data.json
+      fs.writeFileSync('./user_data.json', JSON.stringify(user_data));
+      //show welcome message when registered successfully
       loginMsg_str = `<script>alert('${user_data[username].name} Registered! Please login to proceed');
       location.href = "${'./login.html'}";
       </script>`;
-      // write out updated user_data to user_data.json
-      fs.writeFileSync('./user_data.json', JSON.stringify(user_data));
-      var user_info = { "username": username, "name": user_data[username].name, "email": user_data[username].email };
-      response.cookie('user_info', JSON.stringify(user_info), { maxAge: 30 * 60 * 1000 });
       response.send(loginMsg_str);
-      response.redirect('./products_display.html');
 
    } else {
       // put reg data in params
@@ -116,29 +113,46 @@ app.post("/register", function (request, response) {
 
 });
 
-// Login
+//////////////////////////////////////////////// Login
+app.get("/login.html", function (request, response, next) {
+   // save page that came to login.html (if it's not login.html)
+   var ref_page = request.get('Referrer');
+
+   if (!ref_page.includes('login.html') && !ref_page.includes('register')) {
+      if (typeof ref_page != 'undefined') {
+         request.session.refferer_page_login = ref_page;
+      } else {
+         request.session.refferer_page_login = "./products_display.html";
+      }
+   }
+   console.log(ref_page, request.session.refferer_page_login);
+   next();
+});
 
 app.post("/login.html", function (request, response) {
-   
+
    let params = new URLSearchParams(request.query);
-   var username = request.body['username'].toLowerCase(); 
-    var errors = {};
+   var username = request.body['username'].toLowerCase();
+   var errors = {};
    var loginMsg_str = '';
 
+   
 
    // check if username exeist, then check password entered match password stored
    if (typeof user_data[username] != 'undefined') {
       // take "password" and check if the password in the textbox is right
       if (user_data[username].password == request.body.password) {
-  loginMsg_str = `<script>alert('${username} logged in!);
-      location.href = "${'./products_display.html?prod_key=Kitchen'}";
-      </script>`;
+
          //set a exp of 30 minutes.
          var user_info = { "username": username, "email": user_data[username].email, "name": user_data[username].name };
          response.cookie('user_info', JSON.stringify(user_info), { maxAge: 30 * 60 * 1000 });
          //message that displays after login
+         //show welcome message when registered successfully
+         loginMsg_str = `<script>alert('${user_data[username].name} Logged in! Please hit ok to proceed');
+      location.href = "${request.session.refferer_page_login}";
+      </script>`;
          response.send(loginMsg_str);
-      
+
       } else {
          // if the password doesn't match,   
          params.append(`error`, 'password not correct');
@@ -162,7 +176,7 @@ app.get("/products.js", function (request, response, next) {
 });
 
 
-// Log Out
+/////////////////////////////////////////// Log Out
 app.get("/logout", function (request, response, next) {
    var user_info = JSON.parse(request.cookies["user_info"]);
    var username = user_info["username"];
@@ -189,7 +203,7 @@ app.post("/add_cart", function (request, response) {
    var errors = {}; // assume no errors
    let has_quantities = false;
    var prod_key = request.body["producttype"];
-  
+
 
    for (i in products[prod_key]) {
       var q = request.body[`quantity${i}`];
@@ -218,8 +232,8 @@ app.post("/add_cart", function (request, response) {
    // Add quantities to cart if no errors, send user back to products_display.html with error messages if error
    if (Object.keys(errors).length == 0) {
       // keep up inventory available removing purchased items
-      products[prod_key][i].quantity_available -= Number(request.body[`quantity${i}`]);
-            AddedItem_msg = `<script>alert('Your ${`prod_key${i}`} has been added in your cart!'); location.href="./products_display.html";</script>`;
+
+      AddedItem_msg = `<script>alert('Selected item has been added in your cart!'); location.href="./products_display.html";</script>`;
       // add quantities to cart (put into session)
       if (typeof request.session.cart == 'undefined') {
          request.session.cart = {};
@@ -233,8 +247,8 @@ app.post("/add_cart", function (request, response) {
       console.log(request.session.cart);
       response.send(AddedItem_msg);
       response.redirect(`./products_display.html`);
-      
-      
+
+
    }
    else {
       // oops, had errors, so redirect back to productss_display.html wioth the errors
@@ -299,11 +313,23 @@ app.post('/Complete_Purchase', function (request, response, next) {
       response.redirect('./login.html');
       return;
    } else {
-   var user_info = JSON.parse(request.cookies["user_info"]); //user_info into JSON
-   var user_email = user_info["email"]; //save users' email
+      var user_info = JSON.parse(request.cookies["user_info"]); //user_info into JSON
+      var user_email = user_info["email"]; //save users' email
 
-   //Generate HTML invoice table
-   var invoice_str = ` <link rel="stylesheet" typa="text/css" href="./invoice-style.css">
+      var updated_cart = request.session.cart;
+
+      //keep up inventory when purchased. update products JSON removing purchased items
+      for (pro_key in products) {
+         for (i = 0; i < products[pro_key].length; i++) {
+            if (typeof updated_cart[pro_key] == 'undefined') continue;
+            q_purchased = updated_cart[pro_key][i];
+            products[pro_key][i]['quantity_available'] -= q_purchased;
+         }
+      }
+
+
+      //Generate HTML invoice table
+      var invoice_str = `   <link href="./invoice-style.css" rel="stylesheet">
     <header>
    <h1>Invoice</h1></header>
    
@@ -319,61 +345,61 @@ app.post('/Complete_Purchase', function (request, response, next) {
      <th><span>Extended price</span></th>
 
    </tr>`;
-   var shopping_cart = request.session.cart;
-   subtotal = 0;
-   total_weight =0;
+      var shopping_cart = request.session.cart;
+      subtotal = 0;
+      total_weight = 0;
 
-   for (prod_key in products) {
-      for (i = 0; i < products[prod_key].length; i++) {
-         if (typeof shopping_cart[prod_key] == 'undefined') continue;
-         qty = shopping_cart[prod_key][i];
-       
-         if (qty > 0) {
+      for (prod_key in products) {
+         for (i = 0; i < products[prod_key].length; i++) {
+            if (typeof shopping_cart[prod_key] == 'undefined') continue;
+            qty = shopping_cart[prod_key][i];
 
-            // calculate the subtotals and total_weight and write extended_price and extended_weight
-            extended_price = products[prod_key][i].price * qty;
-            subtotal += extended_price;
-            extended_weight = products[prod_key][i].weight * qty;
-            total_weight += extended_weight;
-         
-      
-   
-   invoice_str += `<tr>
+            if (qty > 0) {
+
+               // calculate the subtotals and total_weight and write extended_price and extended_weight
+               extended_price = products[prod_key][i].price * qty;
+               subtotal += extended_price;
+               extended_weight = products[prod_key][i].weight * qty;
+               total_weight += extended_weight;
+
+
+
+               invoice_str += `<tr>
    <td width="43%">${products[prod_key][i].model}</td>
-   <td align="center" width="10%"><input type="number" min=0 max=${products[prod_key][i].quantity_available} value="${qty}" name="update_quantity_${prod_key}_${i}" ></td>
+   <td align="center" width="10%">${qty}<name="update_quantity_${prod_key}_${i}" ></td>
    <td width="13%">${products[prod_key][i].weight}</td>
    <td width="13%">${extended_weight}</td>
    <td width="13%">\$${products[prod_key][i].price}</td>
    <td width="13%">\$${extended_price}</td>
    
    </tr>`;
-}
-      };
-}
+            }
+         };
+      }
 
-// Compute tax
-var tax_rate = 0.0471;
-var tax = subtotal * tax_rate;
+      // Compute tax
+      var tax_rate = 0.0471;
+      var tax = subtotal * tax_rate;
 
-// Compute shipping // change it to suitable for appliances *weight ..
+      // Compute shipping // change it to suitable for appliances *weight ..
 
-if (total_weight == 0) {
-   shipping = 0;
-}
-else if (total_weight <= 10) {
-   shipping = 50;
-}
-else if (total_weight <= 500) {
-    shipping = 200;
-}
-else {
-    shipping = 300;
-}
+      if (total_weight == 0) {
+         shipping = 0;
+      }
+      else if (total_weight <= 10) {
+         shipping = 50;
+      }
+      else if (total_weight <= 500) {
+         shipping = 200;
+      }
+      else {
+         shipping = 300;
+      }
 
-// Compute grand total
-var total = subtotal + tax + shipping;
+      // Compute grand total
+      var total = subtotal + tax + shipping;
 
-invoice_str +=` <article>
+      invoice_str += ` <article>
 <table class="balance">
 <tbody>
 <tr>
@@ -416,35 +442,36 @@ invoice_str +=` <article>
 <br><br><a href="./index.html"> Continue Shopping! </a>
 `;
 
-   // sets up mail server. Copy of Assignment example 3.
-   //only will work on UH network due to security restrictions
-   var transporter = nodemailer.createTransport({
-      host: "mail.hawaii.edu",
-      port: 25,
-      secure: false, // use TLS
-      tls: {
-         // do not fail on invalid certs
-         rejectUnauthorized: false
-      }
-   });
+      // sets up mail server. Copy of Assignment example 3.
+      //only will work on UH network due to security restrictions
+      var transporter = nodemailer.createTransport({
+         host: "mail.hawaii.edu",
+         port: 25,
+         secure: false, // use TLS
+         tls: {
+            // do not fail on invalid certs
+            rejectUnauthorized: false
+         }
+      });
 
-   var mailOptions = {
-      from: 'yejinj@hawaii.edu',
-      to: user_email,
-      subject: `Thanks, ${user_info.name} For Purchasing from Jen's LG store`,
-      html: invoice_str
-   };
-   transporter.sendMail(mailOptions, function (error, info) {
-      if (error) {
-         invoice_str += '<br>There was an error and your invoice could not be emailed :('; //if invoice unable to send
-      } else {
-         invoice_str += `<br>Your invoice was mailed to ${user_email}`;
-      }
-      response.clearCookie('user_info'); //destroys cookie
-      request.session.destroy(); //delete the session, once email is sent
-      response.send(invoice_str);
+      var mailOptions = {
+         from: 'yejinj@hawaii.edu',
+         to: user_email,
+         subject: `Thanks, ${user_info.name} For Purchasing from Jen's LG store`,
+         html: invoice_str
+      };
+      transporter.sendMail(mailOptions, function (error, info) {
+         if (error) {
+            invoice_str += '<br>There was an error and your invoice could not be emailed :('; //if invoice unable to send
+         } else {
+            invoice_str += `<br>Your invoice was mailed to ${user_email}`;
+         }
+         response.send(invoice_str);
+         response.clearCookie('user_info'); //destroys cookie
+         request.session.destroy(); //delete the session, once email is sent
 
-   });
+
+      });
    }
 });
 

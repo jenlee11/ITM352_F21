@@ -1,5 +1,3 @@
-<script src="/user_data.js" type="json"></script>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -20,7 +18,7 @@
             document.write(`<form name="login" id= "login" action="${location.search}" method="POST">`)</script>
 
         </script>
-        
+        <p><span id="clock"></span></p>
         <label for="username"><b>Username</b></label>
         <input type="text" id="username" name="username" size="40" placeholder="enter username" required><br><br>
         <label for="password"><b>Password</b></label>
@@ -28,12 +26,14 @@
         <input type="submit" value="Submit" id="submit"><br><br>
         <input type="checkbox" id="check">
         <span>Remember me
-        <br><br>
-       <script>
-            document.write(`<p><center> New customer? <br>You can create an acount with us.</p> <a href="./register.html${location.search}"> Sign Up Now!</a></center>`);
+            <br><br>
+            <script>
+                document.write(`<p><center> New customer? <br>You can create an acount with us.</p> <a href="./register.html${location.search}"> Sign Up Now!</a></center>`);
 
-
-        </script></span>
+                var date = new Date();
+                            document.getElementById("clock").innerHTML = date.toLocaleString();
+            </script>
+        </span>
         </form>
     </div>
 </body>
@@ -41,12 +41,14 @@
 </html>
 <script>
     let params = (new URL(document.location)).searchParams;
-window.onload = function() {
-    //do I have errors?
-    if (params.has(`error`)) {
-        alert(params.get(`error`));
+    window.onload = function () {
+        //do I have errors?
+        if (params.has(`error`)) {
+            alert(params.get(`error`));
+        }
+        if (params.has('username')) {
+            username.value = params.get('username')
+        }
     }
-if (params.has('username')) {
-    username.value = params.get('username')}
-}
+
 </script>

@@ -12,6 +12,22 @@
         else if (parseInt(q) != q) errors.push('<font color="red">Not an integer!</font>'); // Check that it is an integer
         return return_errors ? errors : (errors.length == 0);
     }
+// From W3 Schhol Cookies page
+function getCookie(cname) {
+  let name = cname + "=";
+  let decodedCookie = decodeURIComponent(document.cookie);
+  let ca = decodedCookie.split(';');
+  for(let i = 0; i <ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
+}
 
     function checkQuantityTextbox(theTextbox) {
         errs = isNonNegInt(theTextbox.value, true);
@@ -25,6 +41,13 @@
         producttype = params.get(`prod_key`);
     }
     window.onload = function () {
+        // if user is logged in, change login_nav to logout
+        if(getCookie('user_info') != '') {
+            var user_info = JSON.parse(getCookie('user_info'));
+            login_nav.innerHTML = `Logout ${user_info['username']}`;
+            login_nav.href = "./logout";
+        }
+
 
         // if there is an error msg in the q-string, display it in an alert
         if (params.has('err_msg')) {
@@ -88,7 +111,7 @@
 
             
             <li style="float:right"> <a href="./cart.html" class="active">CART</a></li>
-            <li style="float:right"> <a href="./login.html" class="active">LOGIN</a></li>
+            <li style="float:right"> <a id="login_nav" href="./login.html" class="active">LOGIN</a></li>
         </ul>
 
 

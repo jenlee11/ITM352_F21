@@ -80,6 +80,15 @@
     <article>
         <table border="2" table class="inventory">
             <thead>
+                <script>
+                if (getCookie('user_info') != false) {
+                    var user_info = JSON.parse(getCookie('user_info'));
+                    console.log(user_info);
+                    document.write(`Welcome, ${user_info["name"]}!`); // If the user has a cookie called "user_info", welcome them by name
+                } else {
+                    document.write(`User not logged in`); // If the user does not have a cookie called "user_info", display not logged in msg
+                };
+            </script>
                 <tr>
                     <th><span>Model</span></th>
                     <th><span>Quantity</span></th>
@@ -95,13 +104,6 @@
 <form action="./update_cart" method="POST">
                 <script>
 
-                    if (getCookie('user_info') != false) {
-                        var user_info = JSON.parse(getCookie('user_info'));
-                        console.log(user_info);
-                        document.write(`Welcome, ${user_info["name"]}!`); // If the user has a cookie called "user_info", welcome them by name
-                    } else {
-                        document.write(`User not logged in`); // If the user does not have a cookie called "user_info", display not logged in msg
-                    };
 
                     // Need to define subtotal and total_weight because will be adding to them inside generate_item_rows
                     subtotal = 0;
